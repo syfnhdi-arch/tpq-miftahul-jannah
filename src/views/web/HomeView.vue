@@ -6,7 +6,7 @@
         <div class="hero-content">
           <div class="hero-badge">🎓 TPA/TPQ Terpadu</div>
           <h1>Membangun <span class="text-gradient">Generasi Qur'ani</span> Berakhlak Mulia</h1>
-          <p class="hero-subtitle">Sistem pembelajaran terstruktur sejak 2009 di Bandar Lampung</p>
+          <p class="hero-subtitle">Lokasi Masjid Miftahul Jannah RT.004 Labuhan Ratu Bandar Lampung</p>
           
           <div class="hero-stats">
             <div class="stat">
