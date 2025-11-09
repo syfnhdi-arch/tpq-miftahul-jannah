@@ -49,6 +49,23 @@ const router = createRouter({
       ]
     },
 
+    // ===== GURU ROUTES =====
+    {
+      path: '/guru',
+      name: 'guru', 
+      component: () => import('../views/Gurulayout.vue'),
+      meta: { requiresAuth: true, role: 'guru' },
+      redirect: '/guru/dashboard',
+      children: [
+        {
+          path: 'dashboard',
+          name: 'guru-dashboard',
+          component: () => import('../views/guru/Dashboard.vue'),
+          meta: { requiresAuth: true, role: 'guru' }
+        }
+      ]
+    },
+
     // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
