@@ -1,5 +1,3 @@
-[file name]: HomeView.vue
-[file content begin]
 <template>
   <Weblayout>
     <!-- Hero Section -->
@@ -16,12 +14,8 @@
               <div class="label">Level Belajar</div>
             </div>
             <div class="stat">
-              <div class="number">6</div>
-              <div class="label">Guru Ahli</div>
-            </div>
-            <div class="stat">
-              <div class="number">60+</div>
-              <div class="label">Santri Aktif</div>
+              <div class="number">50+</div>
+              <div class="label">Pelajar Aktif</div>
             </div>
             <div class="stat">
               <div class="number">14+</div>
@@ -55,8 +49,8 @@
     <section class="features">
       <div class="container">
         <div class="section-header">
-          <h2>Keunggulan Sistem Kami</h2>
-          <p>Metode pembelajaran yang terbukti efektif</p>
+          <h2>Sistem Yang Kami Gunakan</h2>
+          <p>Metode pembelajaran yang efektif</p>
         </div>
         
         <div class="features-grid">
@@ -72,8 +66,8 @@
           </div>
           <div class="feature-card">
             <div class="feature-icon">👨‍🏫</div>
-            <h3>Guru Specialist</h3>
-            <p>Guru ahli setiap level dengan rasio ideal</p>
+            <h3>Guru </h3>
+            <p>Guru setiap level dengan rasio ideal</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">🚀</div>
@@ -115,7 +109,7 @@
     <section class="cta-section">
       <div class="container">
         <div class="cta-content">
-          <h2>Bergabunglah dengan Keluarga Besar TPA Miftahul Jannah</h2>
+          <h2>Keluarga Besar TPA Miftahul Jannah</h2>
           <p>Mulai perjalanan Quran buah hati Anda dengan sistem terbaik di Bandar Lampung</p>
           
           <div class="cta-buttons">
@@ -523,4 +517,3 @@ const levels = [
   }
 }
 </style>
-[file content end]
