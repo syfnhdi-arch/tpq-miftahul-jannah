@@ -1,67 +1,94 @@
 <template>
-  <div class="dashboard">
-    <h1>🛠️ Guru Dashboard</h1>
-    <div class="user-info">
-      <p><strong>Nama:</strong> {{ auth.getUserFullName() }}</p>
-      <p><strong>Role:</strong> {{ auth.getUserRole() }}</p>
-      <p><strong>Email:</strong> {{ auth.getUserEmail() }}</p>
+  <Gurulayout>
+    <div class="guru-dash">
+      <h1>👨‍🏫 Dashboard Guru</h1>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Santri di Kelas</h3>
+          <div class="number">12</div>
+        </div>
+        <div class="stat-card">
+          <h3>Hadir Hari Ini</h3>
+          <div class="number">10</div>
+        </div>
+        <div class="stat-card">
+          <h3>Level Kelas</h3>
+          <div class="number">2</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h3>Menu Cepat</h3>
+        <div class="actions">
+          <router-link to="/guru/class" class="action-btn">👥 Kelas Saya</router-link>
+          <router-link to="/guru/attendance" class="action-btn">✅ Input Absensi</router-link>
+          <router-link to="/guru/progress" class="action-btn">📈 Progress Santri</router-link>
+        </div>
+      </div>
     </div>
-    <div class="actions">
-      <button @click="goToHome" class="btn">🏠 Ke Home</button>
-      <button @click="handleLogout" class="btn logout">🚪 Logout</button>
-    </div>
-  </div>
+  </Gurulayout>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import { useAuth } from '@/composables/useSupabase'
-import { useRouter } from 'vue-router'
-
-const auth = useAuthStore()
-const { signOut } = useAuth()
-const router = useRouter()
-
-const handleLogout = async () => {
-  await signOut()
-  await auth.init()
-  router.push('/')
-}
-
-const goToHome = () => {
-  router.push('/')
-}
+import Gurulayout from '../Gurulayout.vue'
 </script>
 
 <style scoped>
-.dashboard {
-  padding: 2rem;
-  max-width: 600px;
-  margin: 0 auto;
+.guru-dash h1 {
+  color: #000;
+  margin-bottom: 2rem;
 }
 
-.user-info {
-  background: #f8f9fa;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #f0fdf4;
   padding: 1.5rem;
   border-radius: 8px;
-  margin: 1.5rem 0;
+  border: 2px solid #dcfce7;
+  text-align: center;
+}
+
+.stat-card h3 {
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.quick-actions h3 {
+  color: #374151;
+  margin-bottom: 1rem;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.logout {
-  background: #ef4444;
+.action-btn {
+  background: #16a34a;
   color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.action-btn:hover {
+  background: #22c55e;
 }
 </style>

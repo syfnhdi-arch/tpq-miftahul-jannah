@@ -4,51 +4,114 @@ import { useAuthStore } from '@/stores/auth'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // ===== PUBLIC WEBSITE ROUTES =====
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/HomeView.vue'),
+      component: () => import('../views/web/HomeView.vue'),
     },
     {
       path: '/program',
       name: 'program',
-      component: () => import('../views/Program.vue'),
+      component: () => import('../views/web/Program.vue'),
     },
     {
       path: '/about',
-      name: 'about',
-      component: () => import('../views/About.vue'),
+      name: 'about', 
+      component: () => import('../views/web/About.vue'),
     },
     {
       path: '/contact',
       name: 'contact',
-      component: () => import('../views/Contact.vue'),
+      component: () => import('../views/web/Contact.vue'),
     },
+
+    // ===== AUTHENTICATION ROUTE =====
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/Login.vue'),
     },
-    // Protected routes - Dashboard berdasarkan role
+
+    // ===== ADMIN DASHBOARD ROUTES =====
     {
       path: '/admin',
       name: 'admin',
-      component: () => import('../views/Admin/Dashboard.vue'),
+      component: () => import('../views/admin/Dashboard.vue'),
       meta: { requiresAuth: true, role: 'super_admin' }
     },
     {
+      path: '/admin/students',
+      name: 'admin-students',
+      component: () => import('../views/admin/Students.vue'),
+      meta: { requiresAuth: true, role: 'super_admin' }
+    },
+    {
+      path: '/admin/teachers',
+      name: 'admin-teachers',
+      component: () => import('../views/admin/Teachers.vue'),
+      meta: { requiresAuth: true, role: 'super_admin' }
+    },
+    {
+      path: '/admin/reports',
+      name: 'admin-reports',
+      component: () => import('../views/admin/Reports.vue'),
+      meta: { requiresAuth: true, role: 'super_admin' }
+    },
+
+    // ===== GURU DASHBOARD ROUTES =====
+    {
       path: '/guru',
       name: 'guru',
-      component: () => import('../views/Guru/Dashboard.vue'),
+      component: () => import('../views/guru/Dashboard.vue'),
       meta: { requiresAuth: true, role: 'pengajar' }
     },
     {
+      path: '/guru/class',
+      name: 'guru-class',
+      component: () => import('../views/guru/MyClass.vue'),
+      meta: { requiresAuth: true, role: 'pengajar' }
+    },
+    {
+      path: '/guru/attendance',
+      name: 'guru-attendance',
+      component: () => import('../views/guru/Attendance.vue'),
+      meta: { requiresAuth: true, role: 'pengajar' }
+    },
+    {
+      path: '/guru/progress',
+      name: 'guru-progress',
+      component: () => import('../views/guru/Progress.vue'),
+      meta: { requiresAuth: true, role: 'pengajar' }
+    },
+
+    // ===== ORANG TUA DASHBOARD ROUTES =====
+    {
       path: '/orangtua',
       name: 'orangtua',
-      component: () => import('../views/OrangTua/Dashboard.vue'),
+      component: () => import('../views/orangtua/Dashboard.vue'),
       meta: { requiresAuth: true, role: 'orangtua' }
     },
-    // Fallback route untuk 404
+    {
+      path: '/orangtua/children',
+      name: 'orangtua-children',
+      component: () => import('../views/orangtua/MyChildren.vue'),
+      meta: { requiresAuth: true, role: 'orangtua' }
+    },
+    {
+      path: '/orangtua/progress',
+      name: 'orangtua-progress',
+      component: () => import('../views/orangtua/Progress.vue'),
+      meta: { requiresAuth: true, role: 'orangtua' }
+    },
+    {
+      path: '/orangtua/messages',
+      name: 'orangtua-messages',
+      component: () => import('../views/orangtua/Messages.vue'),
+      meta: { requiresAuth: true, role: 'orangtua' }
+    },
+
+    // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
@@ -87,19 +150,23 @@ router.beforeEach(async (to, _, next) => {
     console.log('❌ [ROUTER] User role:', authStore.profile?.role)
     console.log('✅ [ROUTER] Required role:', to.meta.role)
     
-    // Redirect berdasarkan role user
+    // Redirect berdasarkan role user yang sebenarnya
     const userRole = authStore.profile?.role
     switch (userRole) {
       case 'super_admin':
+        console.log('🔄 [ROUTER] Redirecting to admin dashboard')
         next('/admin')
         break
       case 'pengajar':
+        console.log('🔄 [ROUTER] Redirecting to guru dashboard')
         next('/guru')
         break
       case 'orangtua':
+        console.log('🔄 [ROUTER] Redirecting to orangtua dashboard')
         next('/orangtua')
         break
       default:
+        console.log('🔄 [ROUTER] Redirecting to home')
         next('/')
     }
     return

@@ -1,67 +1,94 @@
 <template>
-  <div class="dashboard">
-    <h1>🛠️ Admin Dashboard</h1>
-    <div class="user-info">
-      <p><strong>Nama:</strong> {{ auth.getUserFullName() }}</p>
-      <p><strong>Role:</strong> {{ auth.getUserRole() }}</p>
-      <p><strong>Email:</strong> {{ auth.getUserEmail() }}</p>
+  <Adminlayout>
+    <div class="admin-dash">
+      <h1>👑 Dashboard Admin</h1>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Total Santri</h3>
+          <div class="number">60</div>
+        </div>
+        <div class="stat-card">
+          <h3>Total Guru</h3>
+          <div class="number">6</div>
+        </div>
+        <div class="stat-card">
+          <h3>Kelas Aktif</h3>
+          <div class="number">4</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="actions">
+          <router-link to="/admin/students" class="action-btn">👥 Kelola Santri</router-link>
+          <router-link to="/admin/teachers" class="action-btn">👨‍🏫 Kelola Guru</router-link>
+          <router-link to="/admin/reports" class="action-btn">📈 Lihat Laporan</router-link>
+        </div>
+      </div>
     </div>
-    <div class="actions">
-      <button @click="goToHome" class="btn">🏠 Ke Home</button>
-      <button @click="handleLogout" class="btn logout">🚪 Logout</button>
-    </div>
-  </div>
+  </Adminlayout>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import { useAuth } from '@/composables/useSupabase'
-import { useRouter } from 'vue-router'
-
-const auth = useAuthStore()
-const { signOut } = useAuth()
-const router = useRouter()
-
-const handleLogout = async () => {
-  await signOut()
-  await auth.init()
-  router.push('/')
-}
-
-const goToHome = () => {
-  router.push('/')
-}
+import Adminlayout from '../Adminlayout.vue'
 </script>
 
 <style scoped>
-.dashboard {
-  padding: 2rem;
-  max-width: 600px;
-  margin: 0 auto;
+.admin-dash h1 {
+  color: #000;
+  margin-bottom: 2rem;
 }
 
-.user-info {
-  background: #f8f9fa;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #f8fafc;
   padding: 1.5rem;
   border-radius: 8px;
-  margin: 1.5rem 0;
+  border: 2px solid #e5e7eb;
+  text-align: center;
+}
+
+.stat-card h3 {
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e40af;
+}
+
+.quick-actions h3 {
+  color: #374151;
+  margin-bottom: 1rem;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.logout {
-  background: #ef4444;
+.action-btn {
+  background: #1e40af;
   color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.action-btn:hover {
+  background: #3b82f6;
 }
 </style>
