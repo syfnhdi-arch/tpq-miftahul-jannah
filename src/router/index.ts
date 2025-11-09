@@ -65,6 +65,23 @@ const router = createRouter({
         }
       ]
     },
+    
+    // ===== ORANGTUA ROUTES =====
+    {
+      path: '/orangtua',
+      name: 'orangtua',
+      component: () => import('../views/Ortulayout.vue'),
+      meta: { requiresAuth: true, role: 'orangtua' },
+      redirect: '/orangtua/dashboard',
+      children: [
+        {
+          path: 'dashboard',
+          name: 'orangtua-dashboard', 
+          component: () => import('../views/orangtua/Dashboard.vue'),
+          meta: { requiresAuth: true, role: 'orangtua' }
+        }
+      ]
+    },
 
     // ===== FALLBACK 404 ROUTE =====
     {
