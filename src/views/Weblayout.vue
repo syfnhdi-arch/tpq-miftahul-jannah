@@ -4,7 +4,7 @@
     <header class="web-header">
       <div class="container">
         <div class="logo">
-          <img src="/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
+          <img src="../assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
           <div class="logo-text">
             <h1>TPA Miftahul Jannah</h1>
             <p>Bandar Lampung</p>
@@ -31,7 +31,7 @@
         <div class="footer-content">
           <div class="footer-section">
             <div class="logo">
-              <img src="/logo.png" alt="TPA Miftahul Jannah" class="logo-img small">
+              <img src="../assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img small">
               <div class="logo-text">
                 <h3>TPA Miftahul Jannah</h3>
                 <p>Bandar Lampung</p>

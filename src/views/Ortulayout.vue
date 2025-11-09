@@ -5,7 +5,7 @@
       <div class="container">
         <div class="header-left">
           <div class="logo">
-            <img src="/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
+            <img src="../assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
             <div class="logo-text">
               <h2>TPA Miftahul Jannah</h2>
               <p>Dashboard Orang Tua</p>
