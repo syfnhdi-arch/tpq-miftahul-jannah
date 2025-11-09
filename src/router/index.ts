@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
-      component: () => import('../views/admin/Dashboard.vue'),
+      component: () => import('../views/admin/DashboardAdmin.vue'),
       meta: { requiresAuth: true, role: 'super_admin' }
     },
     {
@@ -63,7 +63,7 @@ const router = createRouter({
     {
       path: '/guru',
       name: 'guru',
-      component: () => import('../views/guru/Dashboard.vue'),
+      component: () => import('../views/guru/DashboardGuru.vue'),
       meta: { requiresAuth: true, role: 'pengajar' }
     },
     {
@@ -89,7 +89,7 @@ const router = createRouter({
     {
       path: '/orangtua',
       name: 'orangtua',
-      component: () => import('../views/orangtua/Dashboard.vue'),
+      component: () => import('../views/orangtua/DashboardOrtu.vue'),
       meta: { requiresAuth: true, role: 'orangtua' }
     },
     {
