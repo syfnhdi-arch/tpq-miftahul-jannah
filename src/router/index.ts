@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // ===== PUBLIC WEBSITE ROUTES ONLY =====
     {
       path: '/',
       name: 'home',
@@ -25,42 +23,17 @@ const router = createRouter({
       name: 'contact',
       component: () => import('../views/web/Contact.vue'),
     },
-
-    // ===== AUTHENTICATION ROUTE =====
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/Login.vue'),
     },
-   // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFound.vue')
     }
   ]
-})
-
-// Navigation Guard buat authentication
-router.beforeEach((to, _from, next) => {
-  const authStore = useAuthStore()
-  
-  if (to.meta.requiresAuth) {
-    if (!authStore.isAuthenticated()) {
-      next('/login')
-    } else {
-      const userRole = authStore.getUserRole()
-      const requiredRole = to.meta.role
-      
-      if (requiredRole && userRole !== requiredRole) {
-        next('/')
-      } else {
-        next()
-      }
-    }
-  } else {
-    next()
-  }
 })
 
 export default router
