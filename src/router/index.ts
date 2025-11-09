@@ -32,25 +32,7 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/Login.vue'),
     },
-
-    // ===== ADMIN ROUTES =====
-    {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('../views/Adminlayout.vue'),
-      meta: { requiresAuth: true, role: 'super_admin' },
-      redirect: '/admin/dashboard',
-      children: [
-        {
-          path: 'dashboard',
-          name: 'admin-dashboard',
-          component: () => import('../views/admin/Dashboard.vue'),
-          meta: { requiresAuth: true, role: 'super_admin' }
-        }
-      ]
-    },
-
-    // ===== FALLBACK 404 ROUTE =====
+   // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
