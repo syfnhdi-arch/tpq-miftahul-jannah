@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # tpa-website
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -46,3 +47,7 @@ npm run build
 ```sh
 npm run lint
 ```
+=======
+# tpq-miftahul-jannah
+TPQ Management System - Vue.js + Vite
+>>>>>>> 1434e8b469702eaec48f0950a588a103a1953564
