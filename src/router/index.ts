@@ -33,19 +33,19 @@ const router = createRouter({
       component: () => import('../views/Login.vue'),
     },
 
-    // ===== ADMIN ROUTES =====
+    // ===== ORANGTUA ROUTES =====
     {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('../views/Adminlayout.vue'),
-      meta: { requiresAuth: true, role: 'super_admin' },
-      redirect: '/admin/dashboard',
+      path: '/orangtua',
+      name: 'orangtua',
+      component: () => import('../views/Ortulayout.vue'),
+      meta: { requiresAuth: true, role: 'orangtua' },
+      redirect: '/orangtua/dashboard',
       children: [
         {
           path: 'dashboard',
-          name: 'admin-dashboard',
-          component: () => import('@/views/admin/AdminPanel.vue'), // ← PATH ABSOLUTE
-          meta: { requiresAuth: true, role: 'super_admin' }
+          name: 'orangtua-dashboard',
+          component: () => import('../views/orangtua/DashboardOrtu.vue'),
+          meta: { requiresAuth: true, role: 'orangtua' }
         }
       ]
     },
@@ -59,6 +59,7 @@ const router = createRouter({
   ]
 })
 
+// Navigation Guard buat authentication
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   
@@ -66,7 +67,14 @@ router.beforeEach((to, _from, next) => {
     if (!authStore.isAuthenticated()) {
       next('/login')
     } else {
-      next()
+      const userRole = authStore.getUserRole()
+      const requiredRole = to.meta.role
+      
+      if (requiredRole && userRole !== requiredRole) {
+        next('/')
+      } else {
+        next()
+      }
     }
   } else {
     next()

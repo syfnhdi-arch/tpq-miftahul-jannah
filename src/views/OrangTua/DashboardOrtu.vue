@@ -1,12 +1,22 @@
 <template>
-  <Ortulayout>
-    <div>
-      <h1>👨‍👩‍👧‍👦 Dashboard Orang Tua</h1>
-      <p>Halaman orang tua dashboard</p>
+  <div>
+    <h1>👨‍👩‍👧‍👦 Dashboard Orangtua</h1>
+    <p>Halaman dashboard untuk orangtua santri</p>
+    <div class="info">
+      <p>🚧 Fitur dalam pengembangan</p>
     </div>
-  </Ortulayout>
+  </div>
 </template>
 
 <script setup lang="ts">
-import Ortulayout from '../Ortulayout.vue'
 </script>
+
+<style scoped>
+.info {
+  background: #f3f4f6;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+</style>
