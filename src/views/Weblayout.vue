@@ -13,8 +13,8 @@
         <nav class="nav">
           <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">Home</router-link>
           <router-link to="/program" class="nav-link" :class="{ active: $route.path === '/program' }">Program</router-link>
-          <router-link to="/about" class="nav-link" :class="{ active: $route.path === '/about' }">Tentang</router-link>
-          <router-link to="/contact" class="nav-link" :class="{ active: $route.path === '/contact' }">Kontak</router-link>
+          <router-link to="/galeri" class="nav-link" :class="{ active: $route.path === '/galeri' }">Galeri</router-link>
+          <router-link to="/info" class="nav-link" :class="{ active: $route.path === '/info' }">Info</router-link>
           <router-link to="/login" class="nav-link login-btn">Login</router-link>
         </nav>
       </div>
@@ -35,13 +35,13 @@
         <span class="nav-icon">📚</span>
         <span class="nav-label">Program</span>
       </router-link>
-      <router-link to="/about" class="nav-item" :class="{ active: $route.path === '/about' }">
-        <span class="nav-icon">🏫</span>
-        <span class="nav-label">Tentang</span>
+      <router-link to="/galeri" class="nav-item" :class="{ active: $route.path === '/galeri' }">
+        <span class="nav-icon">📸</span>
+        <span class="nav-label">Galeri</span>
       </router-link>
-      <router-link to="/contact" class="nav-item" :class="{ active: $route.path === '/contact' }">
-        <span class="nav-icon">📞</span>
-        <span class="nav-label">Kontak</span>
+      <router-link to="/info" class="nav-item" :class="{ active: $route.path === '/info' }">
+        <span class="nav-icon">ℹ️</span>
+        <span class="nav-label">Info</span>
       </router-link>
       <router-link to="/login" class="nav-item login" :class="{ active: $route.path === '/login' }">
         <span class="nav-icon">🔐</span>
@@ -61,15 +61,15 @@
                 <p>Bandar Lampung</p>
               </div>
             </div>
-            <p class="footer-desc">Membangun generasi Qur'ani yang berakhlak mulia sejak 2009</p>
+            <p class="footer-desc">Membangun generasi Qur'ani yang berakhlak mulia</p>
           </div>
           
           <div class="footer-section">
             <h4>Menu Cepat</h4>
             <router-link to="/">Home</router-link>
             <router-link to="/program">Program</router-link>
-            <router-link to="/about">Tentang</router-link>
-            <router-link to="/contact">Kontak</router-link>
+            <router-link to="/galeri">Galeri</router-link>
+            <router-link to="/info">Info</router-link>
           </div>
           
           <div class="footer-section">
@@ -420,6 +420,46 @@
   
   .web-footer {
     padding: 2rem 0 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .web-header {
+    background: #1f2937;
+    border-bottom-color: #374151;
+  }
+  
+  .logo-text h1 {
+    color: white;
+  }
+  
+  .logo-text p {
+    color: #60a5fa;
+  }
+  
+  .nav-link {
+    color: #d1d5db;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    color: #60a5fa;
+  }
+  
+  .mobile-bottom-nav {
+    background: #1f2937;
+    border-top-color: #374151;
+  }
+  
+  .nav-item {
+    color: #d1d5db;
+  }
+  
+  .nav-item:hover,
+  .nav-item.active {
+    color: #60a5fa;
+    background: #374151;
   }
 }
 </style>

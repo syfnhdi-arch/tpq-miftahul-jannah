@@ -15,14 +15,14 @@ const router = createRouter({
       component: () => import('../views/web/Program.vue'),
     },
     {
-      path: '/about',
-      name: 'about', 
-      component: () => import('../views/web/About.vue'),
+      path: '/galeri',
+      name: 'Galeri',
+      component: () => import('@/views/web/Galeri.vue')
     },
     {
-      path: '/contact',
-      name: 'contact',
-      component: () => import('../views/web/Contact.vue'),
+      path: '/info',
+      name: 'Info',
+      component: () => import('@/views/web/Info.vue')
     },
 
     // ===== AUTHENTICATION ROUTE =====
