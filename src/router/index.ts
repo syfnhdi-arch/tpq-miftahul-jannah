@@ -46,24 +46,6 @@ const router = createRouter({
           name: 'admin-dashboard',
           component: () => import('../views/admin/DashboardAdmin.vue'),
           meta: { requiresAuth: true, role: 'super_admin' }
-        },
-        {
-          path: 'students',
-          name: 'admin-students', 
-          component: () => import('../views/admin/Students.vue'),
-          meta: { requiresAuth: true, role: 'super_admin' }
-        },
-        {
-          path: 'teachers',
-          name: 'admin-teachers',
-          component: () => import('../views/admin/Teachers.vue'),
-          meta: { requiresAuth: true, role: 'super_admin' }
-        },
-        {
-          path: 'reports',
-          name: 'admin-reports',
-          component: () => import('../views/admin/Reports.vue'),
-          meta: { requiresAuth: true, role: 'super_admin' }
         }
       ]
     },
@@ -78,12 +60,12 @@ const router = createRouter({
 })
 
 // Navigation Guard buat authentication
-router.beforeEach((to, _from, next) => { // ← ganti 'from' jadi '_from' biar gak warning
+router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   
   // Check kalo route butuh auth
   if (to.meta.requiresAuth) {
-    if (!authStore.isAuthenticated) {
+    if (!authStore.isAuthenticated()) {
       // Kalo belum login, redirect ke login
       next('/login')
     } else {

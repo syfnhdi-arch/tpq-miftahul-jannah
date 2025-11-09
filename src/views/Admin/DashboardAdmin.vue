@@ -1,12 +1,12 @@
 <template>
-  <Adminlayout>
-    <div>
-      <h1>👑 Dashboard Admin</h1>
-      <p>Halaman admin dashboard</p>
-    </div>
-  </Adminlayout>
+  <div>
+    <h1>👑 Dashboard Admin</h1>
+    <p>Halaman admin dashboard TPA Miftahul Jannah</p>
+  </div>
 </template>
 
 <script setup lang="ts">
-import Adminlayout from '../Adminlayout.vue'
 </script>
+
+<style scoped>
+</style>
