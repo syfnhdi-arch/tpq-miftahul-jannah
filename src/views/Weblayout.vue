@@ -1,9 +1,7 @@
-[file name]: Weblayout.vue
-[file content begin]
 <template>
   <div class="web-layout">
-    <!-- Desktop Header -->
-    <header class="web-header desktop-only">
+    <!-- Header -->
+    <header class="web-header">
       <div class="container">
         <div class="logo">
           <img src="../assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
@@ -26,30 +24,6 @@
     <main class="web-main">
       <slot></slot>
     </main>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav mobile-only">
-      <router-link to="/" class="nav-item" :class="{ active: $route.path === '/' }">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Home</span>
-      </router-link>
-      <router-link to="/program" class="nav-item" :class="{ active: $route.path === '/program' }">
-        <span class="nav-icon">📚</span>
-        <span class="nav-label">Program</span>
-      </router-link>
-      <router-link to="/about" class="nav-item" :class="{ active: $route.path === '/about' }">
-        <span class="nav-icon">🏫</span>
-        <span class="nav-label">Tentang</span>
-      </router-link>
-      <router-link to="/contact" class="nav-item" :class="{ active: $route.path === '/contact' }">
-        <span class="nav-icon">📞</span>
-        <span class="nav-label">Kontak</span>
-      </router-link>
-      <router-link to="/login" class="nav-item login" :class="{ active: $route.path === '/login' }">
-        <span class="nav-icon">🔐</span>
-        <span class="nav-label">Login</span>
-      </router-link>
-    </nav>
 
     <!-- Footer -->
     <footer class="web-footer">
@@ -104,7 +78,7 @@
   flex-direction: column;
 }
 
-/* ===== DESKTOP HEADER ===== */
+/* Header Styles */
 .web-header {
   background: white;
   padding: 1rem 0;
@@ -138,7 +112,6 @@
   height: 50px;
   border-radius: 8px;
   border: 2px solid #1e40af;
-  object-fit: contain;
 }
 
 .logo-img.small {
@@ -167,6 +140,10 @@
   color: #1e40af;
   margin: 0;
   font-weight: 600;
+}
+
+.logo-text .footer-logo p {
+  color: #d1d5db;
 }
 
 .nav {
@@ -213,73 +190,12 @@
   color: white;
 }
 
-/* ===== MOBILE BOTTOM NAVIGATION ===== */
-.mobile-bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 2px solid #e5e7eb;
-  padding: 0.5rem;
-  z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-}
-
-.mobile-bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.5rem;
-  text-decoration: none;
-  color: #374151;
-  transition: all 0.3s;
-  border-radius: 6px;
-}
-
-.nav-item:hover,
-.nav-item.active {
-  color: #1e40af;
-  background: #eff6ff;
-}
-
-.nav-item.login {
-  background: #1e40af;
-  color: white;
-  border-radius: 6px;
-}
-
-.nav-item.login:hover,
-.nav-item.login.active {
-  background: #3b82f6;
-  color: white;
-}
-
-.nav-icon {
-  font-size: 1.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.nav-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-/* ===== MAIN CONTENT ===== */
+/* Main Content */
 .web-main {
   flex: 1;
-  padding-bottom: 60px; /* Biar konten gak ketutup bottom nav */
 }
 
-/* ===== FOOTER ===== */
+/* Footer Styles */
 .web-footer {
   background: #1f2937;
   color: white;
@@ -354,18 +270,17 @@
   font-size: 0.9rem;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .desktop-only {
-    display: none !important;
+  .web-header .container {
+    flex-direction: column;
+    gap: 1rem;
   }
   
-  .mobile-only {
-    display: flex !important;
-  }
-  
-  .web-main {
-    padding-bottom: 70px; /* Space untuk bottom nav */
+  .nav {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .footer-content {
@@ -385,39 +300,30 @@
   }
 }
 
-@media (min-width: 769px) {
-  .desktop-only {
-    display: block !important;
-  }
-  
-  .mobile-only {
-    display: none !important;
-  }
-}
-
 @media (max-width: 480px) {
   .container {
     padding: 0 0.75rem;
   }
   
-  .nav-item {
-    padding: 0.4rem;
+  .nav {
+    gap: 0.75rem;
   }
   
-  .nav-icon {
-    font-size: 1.1rem;
+  .nav-link {
+    font-size: 0.9rem;
   }
   
-  .nav-label {
-    font-size: 0.7rem;
+  .nav-link.login-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .logo-text h1 {
+    font-size: 1.2rem;
   }
   
   .footer-content {
     gap: 1rem;
-  }
-  
-  .web-footer {
-    padding: 2rem 0 1rem;
   }
 }
 
@@ -444,21 +350,5 @@
   .nav-link.active {
     color: #60a5fa;
   }
-  
-  .mobile-bottom-nav {
-    background: #1f2937;
-    border-top-color: #374151;
-  }
-  
-  .nav-item {
-    color: #d1d5db;
-  }
-  
-  .nav-item:hover,
-  .nav-item.active {
-    color: #60a5fa;
-    background: #374151;
-  }
 }
 </style>
-[file content end]

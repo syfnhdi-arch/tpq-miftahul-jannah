@@ -1,8 +1,9 @@
+[file name]: HomeView.vue
+[file content begin]
 <template>
   <Weblayout>
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-bg"></div>
       <div class="container">
         <div class="hero-content">
           <div class="hero-badge">🎓 TPA/TPQ Terpadu</div>
@@ -11,20 +12,20 @@
           
           <div class="hero-stats">
             <div class="stat">
-              <span class="number">4</span>
-              <span class="label">Level Belajar</span>
+              <div class="number">4</div>
+              <div class="label">Level Belajar</div>
             </div>
             <div class="stat">
-              <span class="number">6</span>
-              <span class="label">Guru Ahli</span>
+              <div class="number">6</div>
+              <div class="label">Guru Ahli</div>
             </div>
             <div class="stat">
-              <span class="number">60+</span>
-              <span class="label">Santri Aktif</span>
+              <div class="number">60+</div>
+              <div class="label">Santri Aktif</div>
             </div>
             <div class="stat">
-              <span class="number">14+</span>
-              <span class="label">Tahun</span>
+              <div class="number">14+</div>
+              <div class="label">Tahun</div>
             </div>
           </div>
 
@@ -40,25 +41,11 @@
           </div>
         </div>
         
-        <!-- Hero Image/Illustration -->
+        <!-- Hero Visual -->
         <div class="hero-visual">
-          <div class="floating-card card-1">
-            <span>📖</span>
-            <p>Iqro & Quran</p>
-          </div>
-          <div class="floating-card card-2">
-            <span>🎯</span>
-            <p>Tahsin</p>
-          </div>
-          <div class="floating-card card-3">
-            <span>⭐</span>
-            <p>Tahfidz</p>
-          </div>
-          <div class="main-visual">
-            <div class="visual-content">
-              <span>🕌</span>
-              <p>TPA Miftahul Jannah</p>
-            </div>
+          <div class="visual-placeholder">
+            <img src="../../assets/img/logo.png" alt="TPA Miftahul Jannah" class="hero-logo">
+            <p>TPA Miftahul Jannah</p>
           </div>
         </div>
       </div>
@@ -148,7 +135,6 @@
 </template>
 
 <script setup lang="ts">
-// IMPORT YANG BENAR - Weblayout ada di folder views/
 import Weblayout from '../Weblayout.vue'
 
 const levels = [
@@ -192,41 +178,19 @@ const levels = [
 </script>
 
 <style scoped>
-/* CSS TETAP SAMA SEPERTI SEBELUMNYA */
-/* ===== VARIABLES - SUPER CLEAR ===== */
-:root {
-  --primary: #1e40af;       /* Dark Blue - High contrast */
-  --primary-light: #3b82f6; /* Medium Blue */
-  --secondary: #dc2626;     /* Red - For alerts */
-  --accent: #059669;        /* Green - For success */
-  --warning: #d97706;       /* Orange */
-  
-  --text-dark: #000000;     /* Pure Black - Max contrast */
-  --text-gray: #374151;     /* Dark Gray */
-  --text-light: #6b7280;    /* Medium Gray */
-  
-  --bg-white: #ffffff;      /* Pure White */
-  --bg-light: #f9fafb;      /* Very Light Gray */
-  --bg-blue: #eff6ff;       /* Light Blue */
-  
-  --border: #e5e7eb;        /* Light Border */
-  
-  --shadow: 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* ===== BASE STYLES ===== */
 .container {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* ===== HERO SECTION ===== */
+/* Hero Section */
 .hero {
-  padding: 4rem 0 4rem;
-  background: var(--bg-blue);
-  border-bottom: 2px solid var(--border);
+  padding: 2rem 0 4rem;
+  background: #eff6ff;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
 }
 
 .hero .container {
@@ -236,70 +200,61 @@ const levels = [
   align-items: center;
 }
 
-.hero-content {
-  color: var(--text-dark);
-}
-
 .hero-badge {
-  display: inline-block;
-  background: var(--primary);
+  background: #1e40af;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-size: 0.9rem;
+  display: inline-block;
   font-weight: 700;
   margin-bottom: 1rem;
 }
 
 .hero h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1rem;
-  color: var(--text-dark);
+  color: #000;
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, #1e40af, #059669);
   -webkit-background-clip: text;
+  background-clip: text; /* Tambah ini */
   -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
-  color: var(--text-gray);
+  font-size: 1.2rem;
+  color: #4b5563;
   margin-bottom: 2rem;
-  line-height: 1.6;
 }
 
 .hero-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin: 2rem 0;
 }
 
 .stat {
-  background: var(--bg-white);
+  background: white;
   padding: 1.5rem;
   border-radius: 8px;
   text-align: center;
-  border: 2px solid var(--border);
-  box-shadow: var(--shadow);
+  border: 2px solid #e5e7eb;
 }
 
 .stat .number {
-  display: block;
   font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
-  color: var(--primary);
+  color: #1e40af;
+  display: block;
 }
 
 .stat .label {
-  font-size: 0.9rem;
-  color: var(--text-gray);
+  color: #6b7280;
   font-weight: 600;
 }
 
@@ -314,7 +269,7 @@ const levels = [
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 700;
   transition: all 0.3s;
@@ -322,12 +277,12 @@ const levels = [
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: #1e40af;
   color: white;
 }
 
 .btn-primary:hover {
-  background: var(--primary-light);
+  background: #3b82f6;
 }
 
 .btn-whatsapp {
@@ -339,96 +294,42 @@ const levels = [
   background: #128C7E;
 }
 
-.btn-icon {
-  font-size: 1.1rem;
-}
-
-/* ===== HERO VISUAL ===== */
+/* Hero Visual */
 .hero-visual {
-  position: relative;
-  height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.floating-card {
-  position: absolute;
-  background: var(--bg-white);
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px solid var(--border);
-  box-shadow: var(--shadow);
-  text-align: center;
-  width: 120px;
-}
-
-.floating-card span {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.floating-card p {
-  font-size: 0.9rem;
-  color: var(--text-gray);
-  font-weight: 600;
-  margin: 0;
-}
-
-.card-1 {
-  top: 20px;
-  left: 0;
-  animation: float 3s ease-in-out infinite;
-}
-
-.card-2 {
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  animation: float 3s ease-in-out infinite 0.5s;
-}
-
-.card-3 {
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: float 3s ease-in-out infinite 1s;
-}
-
-.main-visual {
-  background: var(--bg-white);
+.visual-placeholder {
+  background: white;
   padding: 3rem;
   border-radius: 12px;
-  border: 2px solid var(--border);
+  border: 2px solid #e5e7eb;
   text-align: center;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.visual-content span {
-  font-size: 4rem;
-  display: block;
+.hero-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  border: 3px solid #1e40af;
   margin-bottom: 1rem;
-  color: var(--primary);
+  object-fit: contain;
 }
 
-.visual-content p {
-  font-size: 1.1rem;
-  color: var(--text-gray);
-  font-weight: 600;
+.visual-placeholder p {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #374151;
   margin: 0;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* ===== FEATURES SECTION ===== */
+/* Features Section */
 .features {
   padding: 4rem 0;
-  background: var(--bg-white);
-  border-bottom: 2px solid var(--border);
+  background: white;
 }
 
 .section-header {
@@ -438,14 +339,14 @@ const levels = [
 
 .section-header h2 {
   font-size: 2.5rem;
-  color: var(--text-dark);
+  color: #000;
   margin-bottom: 1rem;
   font-weight: 800;
 }
 
 .section-header p {
-  font-size: 1.1rem;
-  color: var(--text-gray);
+  font-size: 1.2rem;
+  color: #6b7280;
 }
 
 .features-grid {
@@ -455,37 +356,39 @@ const levels = [
 }
 
 .feature-card {
-  background: var(--bg-white);
+  background: white;
   padding: 2rem;
   border-radius: 8px;
   text-align: center;
-  border: 2px solid var(--border);
-  box-shadow: var(--shadow);
+  border: 2px solid #e5e7eb;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
 }
 
 .feature-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: var(--primary);
 }
 
 .feature-card h3 {
   font-size: 1.3rem;
-  color: var(--text-dark);
+  color: #000;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .feature-card p {
-  color: var(--text-gray);
+  color: #6b7280;
   line-height: 1.6;
 }
 
-/* ===== LEVEL PREVIEW ===== */
+/* Level Preview */
 .level-preview {
   padding: 4rem 0;
-  background: var(--bg-light);
-  border-bottom: 2px solid var(--border);
+  background: #f9fafb;
 }
 
 .level-cards {
@@ -495,11 +398,10 @@ const levels = [
 }
 
 .level-card {
-  background: var(--bg-white);
+  background: white;
   padding: 2rem;
   border-radius: 8px;
-  border: 2px solid var(--border);
-  box-shadow: var(--shadow);
+  border: 2px solid #e5e7eb;
 }
 
 .level-header {
@@ -508,26 +410,24 @@ const levels = [
 }
 
 .level-badge {
-  display: inline-block;
-  background: var(--primary);
+  background: #1e40af;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-weight: 700;
-  font-size: 0.8rem;
+  display: inline-block;
   margin-bottom: 1rem;
 }
 
 .level-card h3 {
   font-size: 1.4rem;
-  color: var(--text-dark);
+  color: #000;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
 .level-desc {
-  color: var(--text-gray);
-  font-size: 0.9rem;
+  color: #6b7280;
   margin-bottom: 1.5rem;
 }
 
@@ -539,9 +439,8 @@ const levels = [
 
 .level-features li {
   padding: 0.5rem 0;
-  color: var(--text-dark);
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
 }
 
 .level-features li:last-child {
@@ -551,15 +450,14 @@ const levels = [
 .level-meta {
   display: flex;
   justify-content: space-between;
-  color: var(--text-gray);
-  font-size: 0.9rem;
+  color: #6b7280;
   font-weight: 600;
 }
 
-/* ===== CTA SECTION ===== */
+/* CTA Section */
 .cta-section {
   padding: 4rem 0;
-  background: var(--primary);
+  background: #1e40af;
   color: white;
   text-align: center;
 }
@@ -571,7 +469,7 @@ const levels = [
 }
 
 .cta-content p {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-bottom: 2rem;
   opacity: 0.9;
 }
@@ -582,32 +480,25 @@ const levels = [
 
 .btn-whatsapp-lg {
   background: white;
-  color: var(--primary);
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
+  color: #1e40af;
 }
 
 .btn-outline-white {
   background: transparent;
   color: white;
-  border: 2px solid white;
+  border-color: white;
 }
 
 .btn-outline-white:hover {
   background: white;
-  color: var(--primary);
+  color: #1e40af;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* Responsive */
 @media (max-width: 768px) {
-  .hero {
-    padding: 2rem 0;
-  }
-  
   .hero .container {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 2rem;
   }
   
   .hero h1 {
@@ -622,52 +513,14 @@ const levels = [
     flex-direction: column;
   }
   
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
-  
   .section-header h2 {
     font-size: 2rem;
   }
   
-  .hero-visual {
-    height: auto;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .floating-card {
-    position: static;
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .main-visual {
-    order: -1;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 0.75rem;
-  }
-  
-  .hero h1 {
-    font-size: 1.75rem;
-  }
-  
-  .section-header h2 {
-    font-size: 1.75rem;
-  }
-  
-  .cta-content h2 {
-    font-size: 1.75rem;
-  }
-  
-  .feature-card,
-  .level-card {
-    padding: 1.5rem;
+  .hero-logo {
+    width: 100px;
+    height: 100px;
   }
 }
 </style>
+[file content end]
