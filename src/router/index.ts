@@ -44,7 +44,7 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'admin-dashboard',
-          component: () => import('../views/admin/DashboardAdmin.vue'),
+          component: () => import('../views/admin/DashboardAdmin.vue'), // ← INI YANG BENER!
           meta: { requiresAuth: true, role: 'super_admin' }
         }
       ]
@@ -63,18 +63,14 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   
-  // Check kalo route butuh auth
   if (to.meta.requiresAuth) {
     if (!authStore.isAuthenticated()) {
-      // Kalo belum login, redirect ke login
       next('/login')
     } else {
-      // Check role-based access
       const userRole = authStore.getUserRole()
       const requiredRole = to.meta.role
       
       if (requiredRole && userRole !== requiredRole) {
-        // Kalo role ga sesuai, redirect ke home
         next('/')
       } else {
         next()
