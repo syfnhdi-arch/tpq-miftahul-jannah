@@ -32,6 +32,14 @@ const router = createRouter({
       component: () => import('../views/Login.vue'),
     },
 
+    // Tambahin admin route dulu
+    {
+      path: '/admin',
+      name: 'admin', 
+      component: () => import('../views/admin/Dashboard.vue'),
+      meta: { requiresAuth: true, role: 'super_admin' }
+    },
+
     // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
