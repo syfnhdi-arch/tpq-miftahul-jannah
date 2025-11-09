@@ -1,0 +1,20 @@
+<template>
+  <router-view />
+</template>
+
+<script setup lang="ts">
+</script>
+
+<style>
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f9fafb;
+}
+</style>
