@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,23 +32,6 @@ const router = createRouter({
       component: () => import('../views/Login.vue'),
     },
 
-    // ===== ORANGTUA ROUTES =====
-    {
-      path: '/orangtua',
-      name: 'orangtua',
-      component: () => import('../views/Ortulayout.vue'),
-      meta: { requiresAuth: true, role: 'orangtua' },
-      redirect: '/orangtua/dashboard',
-      children: [
-        {
-          path: 'dashboard',
-          name: 'orangtua-dashboard',
-          component: () => import('../views/orangtua/DashboardOrtu.vue'),
-          meta: { requiresAuth: true, role: 'orangtua' }
-        }
-      ]
-    },
-
     // ===== FALLBACK 404 ROUTE =====
     {
       path: '/:pathMatch(.*)*',
@@ -57,28 +39,6 @@ const router = createRouter({
       component: () => import('../views/NotFound.vue')
     }
   ]
-})
-
-// Navigation Guard buat authentication
-router.beforeEach((to, _from, next) => {
-  const authStore = useAuthStore()
-  
-  if (to.meta.requiresAuth) {
-    if (!authStore.isAuthenticated()) {
-      next('/login')
-    } else {
-      const userRole = authStore.getUserRole()
-      const requiredRole = to.meta.role
-      
-      if (requiredRole && userRole !== requiredRole) {
-        next('/')
-      } else {
-        next()
-      }
-    }
-  } else {
-    next()
-  }
 })
 
 export default router
