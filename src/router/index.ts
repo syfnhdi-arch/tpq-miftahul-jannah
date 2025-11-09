@@ -44,7 +44,7 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'admin-dashboard',
-          component: () => import('../views/admin/DashboardAdmin.vue'),
+          component: () => import('@/views/admin/DashboardAdmin.vue'), // ← PATH ABSOLUTE
           meta: { requiresAuth: true, role: 'super_admin' }
         }
       ]
@@ -59,7 +59,6 @@ const router = createRouter({
   ]
 })
 
-// Navigation Guard sederhana dulu
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   
