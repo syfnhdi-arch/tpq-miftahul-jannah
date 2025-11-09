@@ -128,8 +128,6 @@ router.beforeEach(async (to, _, next) => {
   console.log('📍 [ROUTER] To:', to.name)
   console.log('🔐 [ROUTER] Requires auth:', to.meta.requiresAuth)
   console.log('🎭 [ROUTER] Required role:', to.meta.role)
-  console.log('👤 [ROUTER] Current user:', authStore.user?.email)
-  console.log('📋 [ROUTER] Current profile:', authStore.profile)
 
   // Initialize auth store jika belum
   if (!authStore.user && authStore.loading) {
