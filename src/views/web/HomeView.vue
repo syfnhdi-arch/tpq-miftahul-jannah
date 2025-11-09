@@ -1,49 +1,5 @@
 <template>
-  <div class="home">
-    <!-- Desktop Header -->
-    <header class="header desktop-header">
-      <div class="container">
-        <div class="logo">
-          <img src="@/assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img">
-          <div class="logo-text">
-            <h1>TPA Miftahul Jannah</h1>
-            <p>Bandar Lampung</p>
-          </div>
-        </div>
-        <nav class="nav">
-          <router-link to="/" class="nav-link active">Home</router-link>
-          <router-link to="/program" class="nav-link">Program</router-link>
-          <router-link to="/about" class="nav-link">Tentang</router-link>
-          <router-link to="/contact" class="nav-link">Kontak</router-link>
-          <router-link to="/login" class="nav-link login-btn">Login</router-link>
-        </nav>
-      </div>
-    </header>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav">
-      <router-link to="/" class="nav-item active">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Home</span>
-      </router-link>
-      <router-link to="/program" class="nav-item">
-        <span class="nav-icon">📚</span>
-        <span class="nav-label">Program</span>
-      </router-link>
-      <router-link to="/about" class="nav-item">
-        <span class="nav-icon">🏫</span>
-        <span class="nav-label">Tentang</span>
-      </router-link>
-      <router-link to="/contact" class="nav-item">
-        <span class="nav-icon">📞</span>
-        <span class="nav-label">Kontak</span>
-      </router-link>
-      <router-link to="/login" class="nav-item login">
-        <span class="nav-icon">🔐</span>
-        <span class="nav-label">Login</span>
-      </router-link>
-    </nav>
-
+  <Weblayout>
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-bg"></div>
@@ -188,54 +144,13 @@
         </div>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <div class="logo">
-              <img src="@/assets/img/logo.png" alt="TPA Miftahul Jannah" class="logo-img small">
-              <div class="logo-text">
-                <h4>TPA Miftahul Jannah</h4>
-                <p>Bandar Lampung</p>
-              </div>
-            </div>
-            <p class="footer-desc">Membangun generasi Qur'ani berakhlak mulia sejak 2009</p>
-          </div>
-          
-          <div class="footer-section">
-            <h4>Menu Cepat</h4>
-            <router-link to="/">Home</router-link>
-            <router-link to="/program">Program</router-link>
-            <router-link to="/about">Tentang</router-link>
-            <router-link to="/contact">Kontak</router-link>
-          </div>
-          
-          <div class="footer-section">
-            <h4>Kontak</h4>
-            <div class="contact-info">
-              <a href="https://wa.me/6289507980791" class="contact-link">
-                <span class="contact-icon">📱</span>
-                +62 895-0798-0791
-              </a>
-              <div class="contact-link">
-                <span class="contact-icon">📍</span>
-                JL. Keramat Gg. Dahlia III, Bandar Lampung
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="footer-bottom">
-          <p>&copy; 2024 TPA Miftahul Jannah. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
-  </div>
+  </Weblayout>
 </template>
 
 <script setup lang="ts">
+// IMPORT YANG BENAR - Weblayout ada di folder views/
+import Weblayout from '../Weblayout.vue'
+
 const levels = [
   {
     id: 1,
@@ -277,6 +192,7 @@ const levels = [
 </script>
 
 <style scoped>
+/* CSS TETAP SAMA SEPERTI SEBELUMNYA */
 /* ===== VARIABLES - SUPER CLEAR ===== */
 :root {
   --primary: #1e40af;       /* Dark Blue - High contrast */
@@ -300,139 +216,15 @@ const levels = [
 }
 
 /* ===== BASE STYLES ===== */
-.home {
-  min-height: 100vh;
-  background: var(--bg-white);
-  color: var(--text-dark);
-}
-
 .container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* ===== DESKTOP HEADER ===== */
-.desktop-header {
-  background: var(--bg-white);
-  padding: 1rem 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  border-bottom: 2px solid var(--border);
-}
-
-.desktop-header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  border: 2px solid var(--primary);
-  border-radius: 8px;
-}
-
-.logo-text h1 {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--text-dark);
-  margin: 0;
-  line-height: 1.2;
-}
-
-.logo-text p {
-  font-size: 0.9rem;
-  color: var(--primary);
-  margin: 0;
-  font-weight: 600;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: var(--text-gray);
-  font-weight: 600;
-  transition: color 0.3s;
-  padding: 0.5rem 0;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: var(--primary);
-}
-
-.nav-link.login-btn {
-  background: var(--primary);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-
-.nav-link.login-btn:hover {
-  background: var(--primary-light);
-}
-
-/* ===== MOBILE BOTTOM NAV ===== */
-.mobile-bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-white);
-  border-top: 2px solid var(--border);
-  padding: 0.5rem;
-  z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-}
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.5rem;
-  text-decoration: none;
-  color: var(--text-gray);
-  transition: color 0.3s;
-}
-
-.nav-item.active {
-  color: var(--primary);
-}
-
-.nav-icon {
-  font-size: 1.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.nav-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
 /* ===== HERO SECTION ===== */
 .hero {
-  padding: 8rem 0 4rem;
+  padding: 4rem 0 4rem;
   background: var(--bg-blue);
   border-bottom: 2px solid var(--border);
 }
@@ -465,6 +257,13 @@ const levels = [
   line-height: 1.2;
   margin-bottom: 1rem;
   color: var(--text-dark);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero-subtitle {
@@ -546,32 +345,83 @@ const levels = [
 
 /* ===== HERO VISUAL ===== */
 .hero-visual {
+  position: relative;
+  height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.visual-placeholder {
+.floating-card {
+  position: absolute;
+  background: var(--bg-white);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+  text-align: center;
+  width: 120px;
+}
+
+.floating-card span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.floating-card p {
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-1 {
+  top: 20px;
+  left: 0;
+  animation: float 3s ease-in-out infinite;
+}
+
+.card-2 {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  animation: float 3s ease-in-out infinite 0.5s;
+}
+
+.card-3 {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: float 3s ease-in-out infinite 1s;
+}
+
+.main-visual {
   background: var(--bg-white);
   padding: 3rem;
   border-radius: 12px;
   border: 2px solid var(--border);
   text-align: center;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
 }
 
-.visual-placeholder span {
+.visual-content span {
   font-size: 4rem;
   display: block;
   margin-bottom: 1rem;
   color: var(--primary);
 }
 
-.visual-placeholder p {
+.visual-content p {
   font-size: 1.1rem;
   color: var(--text-gray);
   font-weight: 600;
   margin: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* ===== FEATURES SECTION ===== */
@@ -748,82 +598,10 @@ const levels = [
   color: var(--primary);
 }
 
-/* ===== FOOTER ===== */
-.footer {
-  background: var(--text-dark);
-  color: white;
-  padding: 3rem 0 1rem;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.footer-section h4 {
-  color: white;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.footer-section a {
-  display: block;
-  color: #d1d5db;
-  text-decoration: none;
-  margin-bottom: 0.5rem;
-  transition: color 0.3s;
-}
-
-.footer-section a:hover {
-  color: white;
-}
-
-.footer-desc {
-  color: #d1d5db;
-  line-height: 1.6;
-  margin-top: 1rem;
-}
-
-.contact-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.contact-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #d1d5db;
-  text-decoration: none;
-}
-
-.contact-icon {
-  font-size: 1.1rem;
-}
-
-.footer-bottom {
-  border-top: 1px solid #374151;
-  padding-top: 1rem;
-  text-align: center;
-  color: #9ca3af;
-}
-
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
-  .desktop-header {
-    display: none;
-  }
-  
-  .mobile-bottom-nav {
-    display: flex;
-  }
-  
   .hero {
-    padding: 6rem 0 2rem;
+    padding: 2rem 0;
   }
   
   .hero .container {
@@ -834,6 +612,10 @@ const levels = [
   
   .hero h1 {
     font-size: 2rem;
+  }
+  
+  .hero-stats {
+    grid-template-columns: 1fr;
   }
   
   .cta-buttons {
@@ -847,6 +629,45 @@ const levels = [
   
   .section-header h2 {
     font-size: 2rem;
+  }
+  
+  .hero-visual {
+    height: auto;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .floating-card {
+    position: static;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .main-visual {
+    order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+  
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.75rem;
+  }
+  
+  .feature-card,
+  .level-card {
+    padding: 1.5rem;
   }
 }
 </style>
