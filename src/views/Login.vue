@@ -1,65 +1,65 @@
 <template>
-  <div class="login-page">
-    <div class="container">
-      <router-link to="/" class="back-btn">← Kembali</router-link>
-      
-      <div class="login-card">
-        <div class="logo">📚</div>
-        <h2>Login TPA</h2>
-        <p>Masuk ke sistem TPA Miftahul Jannah</p>
-        
-        <form @submit.prevent="handleLogin" class="login-form">
-          <div class="form-group">
-            <label>Username</label>
-            <input 
-              v-model="form.username" 
-              type="text" 
-              placeholder="Masukkan username" 
-              required
+  <Weblayout>
+    <div class="login-page">
+      <div class="container">
+        <div class="login-card">
+          <div class="logo">📚</div>
+          <h2>Login TPA</h2>
+          <p>Masuk ke sistem TPA Miftahul Jannah</p>
+          
+          <form @submit.prevent="handleLogin" class="login-form">
+            <div class="form-group">
+              <label>Username</label>
+              <input 
+                v-model="form.username" 
+                type="text" 
+                placeholder="Masukkan username" 
+                required
+                :disabled="loading"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label>Password</label>
+              <input 
+                v-model="form.password" 
+                type="password" 
+                placeholder="••••••••" 
+                required
+                :disabled="loading"
+              >
+            </div>
+            
+            <button 
+              type="submit" 
+              class="login-btn"
               :disabled="loading"
             >
-          </div>
-          
-          <div class="form-group">
-            <label>Password</label>
-            <input 
-              v-model="form.password" 
-              type="password" 
-              placeholder="••••••••" 
-              required
-              :disabled="loading"
-            >
-          </div>
-          
-          <button 
-            type="submit" 
-            class="login-btn"
-            :disabled="loading"
-          >
-            <span v-if="loading">Memproses...</span>
-            <span v-else>Login</span>
-          </button>
+              <span v-if="loading">Memproses...</span>
+              <span v-else>Login</span>
+            </button>
 
-          <div v-if="error" class="error-message">
-            {{ error }}
-          </div>
-        </form>
-        
-        <div class="demo-accounts">
-          <h4>Akun Demo:</h4>
-          <div class="demo-account" @click="fillDemo('admin')">
-            <strong>Admin:</strong> admin / password123
-          </div>
-          <div class="demo-account" @click="fillDemo('guru')">
-            <strong>Guru:</strong> guru / password123  
-          </div>
-          <div class="demo-account" @click="fillDemo('orangtua')">
-            <strong>Orang Tua:</strong> orangtua / password123
+            <div v-if="error" class="error-message">
+              {{ error }}
+            </div>
+          </form>
+          
+          <div class="demo-accounts">
+            <h4>Akun Demo:</h4>
+            <div class="demo-account" @click="fillDemo('admin')">
+              <strong>Admin:</strong> admin / password123
+            </div>
+            <div class="demo-account" @click="fillDemo('guru')">
+              <strong>Guru:</strong> guru / password123  
+            </div>
+            <div class="demo-account" @click="fillDemo('orangtua')">
+              <strong>Orang Tua:</strong> orangtua / password123
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Weblayout>
 </template>
 
 <script setup lang="ts">
@@ -67,6 +67,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useSupabase'
 import { useAuthStore } from '@/stores/auth'
+import Weblayout from './Weblayout.vue'
 
 const router = useRouter()
 const { signIn } = useAuth()
@@ -89,13 +90,10 @@ const handleLogin = async () => {
     
     if (authError) throw authError
 
-    // Refresh auth store to get user profile
     await authStore.init()
 
-    // Show success message
     alert(`Login berhasil! Selamat datang ${authStore.getUserFullName()}`)
     
-    // 🔥 REDIRECT BERDASARKAN ROLE
     const role = authStore.getUserRole()
     console.log('🎯 Redirect berdasarkan role:', role)
     
@@ -134,24 +132,17 @@ const fillDemo = (role: string) => {
 
 <style scoped>
 .login-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 200px);
   background: linear-gradient(135deg, #f0f9f0 0%, #e6f3ff 100%);
-  padding: 2rem 0;
   display: flex;
   align-items: center;
+  padding: 2rem 0;
 }
 
 .container {
   max-width: 400px;
   margin: 0 auto;
   padding: 0 20px;
-}
-
-.back-btn {
-  color: #4a5568;
-  text-decoration: none;
-  margin-bottom: 2rem;
-  display: inline-block;
 }
 
 .login-card {
@@ -265,5 +256,25 @@ const fillDemo = (role: string) => {
 
 .demo-account:last-child {
   margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 1rem 0;
+    min-height: calc(100vh - 150px);
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+  
+  .login-card {
+    padding: 1.5rem;
+  }
+  
+  .logo {
+    font-size: 2.5rem;
+  }
 }
 </style>
