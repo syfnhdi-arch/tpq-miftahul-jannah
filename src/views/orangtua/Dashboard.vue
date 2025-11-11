@@ -135,7 +135,7 @@ const children = ref([
     id: 1,
     name: 'Muhammad Daffa Rafif Wibowo',
     class: 'Kelas Al-Quran A',
-    photo: '/pasfoto/dafa.png', // Path dari public folder - nama file sesuai yang ada
+    photo: '/pasfoto/Muhammad Daffa Rafif Wibowo.png',
     attendance: 95,
     status: 'active',
     statusText: 'Aktif'
@@ -144,7 +144,7 @@ const children = ref([
     id: 2, 
     name: 'Asyifa Zafira Putri Ramadhani',
     class: 'Kelas Tajwid B',
-    photo: '/pasfoto/syifa.png', // Path dari public folder - nama file sesuai yang ada
+    photo: '/pasfoto/Asyifa Zafira Putri Ramadhani.png',
     attendance: 88,
     status: 'active',
     statusText: 'Aktif'
