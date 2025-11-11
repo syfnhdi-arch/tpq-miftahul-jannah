@@ -1,5 +1,3 @@
-[file name]: Dashboard.vue
-[file content begin]
 <template>
   <div class="ortu-dashboard">
     <!-- Welcome Section -->
@@ -131,13 +129,13 @@ import { ref, computed, onMounted } from 'vue'
 
 const currentDate = ref('')
 
-// Sample data dengan foto real dari assets/pasfoto/
+// Sample data dengan path dari public folder
 const children = ref([
   {
     id: 1,
     name: 'Muhammad Daffa Rafif Wibowo',
     class: 'Kelas Al-Quran A',
-    photo: '/src/assets/pasfoto/Muhammad Daffa Rafif Wibowo.png',
+    photo: '/pasfoto/dafa.png', // Path dari public folder - nama file sesuai yang ada
     attendance: 95,
     status: 'active',
     statusText: 'Aktif'
@@ -146,7 +144,7 @@ const children = ref([
     id: 2, 
     name: 'Asyifa Zafira Putri Ramadhani',
     class: 'Kelas Tajwid B',
-    photo: '/src/assets/pasfoto/Asyifa Zafira Putri Ramadhani.png',
+    photo: '/pasfoto/syifa.png', // Path dari public folder - nama file sesuai yang ada
     attendance: 88,
     status: 'active',
     statusText: 'Aktif'
@@ -663,4 +661,3 @@ onMounted(() => {
   }
 }
 </style>
-[file content end]
