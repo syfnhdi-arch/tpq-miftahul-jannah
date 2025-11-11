@@ -1,4 +1,3 @@
-<template>
   <div class="ortu-dashboard">
     <!-- Welcome Section -->
     <div class="welcome-section">
