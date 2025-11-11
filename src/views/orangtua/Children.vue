@@ -1,5 +1,3 @@
-[file name]: Children.vue
-[file content begin]
 <template>
   <div class="ortu-page">
     <div class="page-header">
@@ -623,4 +621,3 @@ const sendMessage = (childId: number) => {
   }
 }
 </style>
-[file content end]
