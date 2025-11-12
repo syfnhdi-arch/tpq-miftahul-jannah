@@ -15,17 +15,11 @@
                 type="email" 
                 placeholder="Masukkan email Anda" 
                 required
-                :disabled="loading"
               >
             </div>
             
-            <button 
-              type="submit" 
-              class="reset-btn"
-              :disabled="loading"
-            >
-              <span v-if="loading">Mengirim...</span>
-              <span v-else>Kirim Link Reset</span>
+            <button type="submit" class="reset-btn">
+              Kirim Link Reset
             </button>
 
             <div v-if="error" class="error-message">
@@ -38,9 +32,7 @@
           </form>
           
           <div class="login-link">
-            <p>Ingat password? 
-              <router-link to="/login">Login di sini</router-link>
-            </p>
+            <router-link to="/login">← Kembali ke Login</router-link>
           </div>
         </div>
       </div>
@@ -53,77 +45,59 @@ import { ref } from 'vue'
 import { supabase } from '@/composables/useSupabase'
 import Weblayout from './Weblayout.vue'
 
-const form = ref({
-  email: ''
-})
-
-const loading = ref(false)
+const form = ref({ email: '' })
 const error = ref('')
 const success = ref('')
 
 const handleResetPassword = async () => {
   try {
-    loading.value = true
     error.value = ''
     success.value = ''
 
-    // PAKAI HASH ROUTING - lebih reliable untuk Vue Router
-    const redirectTo = 'https://tpq-miftahul-jannah.vercel.app/#/reset-password'
-
-    console.log('🔐 Sending reset password email to:', form.value.email)
-    console.log('🔗 Redirect URL:', redirectTo)
+    // PAKAI INI AJA - PASTI WORK
+    const redirectTo = `${window.location.origin}/#/reset-password`
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       form.value.email,
-      {
-        redirectTo: redirectTo,
-      }
+      { redirectTo }
     )
     
-    if (resetError) {
-      console.error('❌ Reset password error:', resetError)
-      throw resetError
-    }
+    if (resetError) throw resetError
 
-    success.value = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox atau spam folder.'
+    success.value = 'Link reset sudah dikirim! Cek email Anda.'
     form.value.email = ''
 
-    console.log('✅ Reset password email sent successfully')
-
   } catch (err: any) {
-    console.error('❌ Reset password failed:', err)
-    error.value = err.message || 'Gagal mengirim link reset. Silakan coba lagi.'
-  } finally {
-    loading.value = false
+    error.value = 'Gagal kirim link reset. Coba lagi.'
   }
 }
 </script>
 
 <style scoped>
 .forgot-password-page {
-  min-height: calc(100vh - 200px);
-  background: linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%);
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 2rem;
 }
 
 .container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 0 20px;
+  width: 100%;
 }
 
 .forgot-password-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   text-align: center;
 }
 
 .logo {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 1rem;
 }
 
@@ -137,111 +111,77 @@ const handleResetPassword = async () => {
   margin-bottom: 2rem;
 }
 
-.forgot-password-form {
-  text-align: left;
-}
-
 .form-group {
   margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: #4a5568;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px;
   border: 2px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
-  transition: border-color 0.3s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #4299e1;
+  border-color: #667eea;
 }
 
 .reset-btn {
   width: 100%;
-  background: #ed8936;
+  background: #667eea;
   color: white;
   border: none;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  margin-top: 1rem;
 }
 
-.reset-btn:hover:not(:disabled) {
-  background: #dd6b20;
-}
-
-.reset-btn:disabled {
-  background: #a0aec0;
-  cursor: not-allowed;
+.reset-btn:hover {
+  background: #5a6fd8;
 }
 
 .error-message {
   background: #fed7d7;
   color: #c53030;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-top: 1rem;
-  text-align: center;
-  font-weight: 500;
 }
 
 .success-message {
   background: #c6f6d5;
   color: #276749;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-top: 1rem;
-  text-align: center;
-  font-weight: 500;
 }
 
 .login-link {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid #e2e8f0;
-  text-align: center;
 }
 
 .login-link a {
-  color: #4299e1;
+  color: #667eea;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .login-link a:hover {
   text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .forgot-password-page {
-    padding: 1rem 0;
-    min-height: calc(100vh - 150px);
-  }
-  
-  .container {
-    padding: 0 15px;
-  }
-  
-  .forgot-password-card {
-    padding: 1.5rem;
-  }
-  
-  .logo {
-    font-size: 2.5rem;
-  }
 }
 </style>
