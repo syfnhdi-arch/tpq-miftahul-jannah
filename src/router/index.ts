@@ -241,8 +241,8 @@ const router = createRouter({
   ]
 })
 
-// ROUTER GUARD
-router.beforeEach(async (to, from, next) => {
+// ROUTER GUARD - FIX: remove unused 'from' parameter
+router.beforeEach(async (to, _, next) => {
   const authStore = useAuthStore()
   
   // Wait for auth to initialize
