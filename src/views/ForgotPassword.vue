@@ -1,19 +1,41 @@
 <template>
   <Weblayout>
-    <div class="forgot-password-page">
+    <div class="reset-password-page">
       <div class="container">
-        <div class="forgot-password-card">
-          <div class="logo">🔑</div>
-          <h2>Lupa Password</h2>
-          <p>Masukkan email Anda untuk reset password</p>
+        <div class="reset-password-card">
+          <div class="logo">🔄</div>
+          <h2>Reset Password</h2>
+          <p>Masukkan password baru Anda</p>
           
-          <form @submit.prevent="handleResetPassword" class="forgot-password-form">
+          <form @submit.prevent="handleResetPassword" class="reset-password-form">
             <div class="form-group">
-              <label>Email</label>
+              <label>Password Baru</label>
+              <div class="password-input-container">
+                <input 
+                  v-model="form.password" 
+                  :type="showPassword ? 'text' : 'password'" 
+                  placeholder="••••••••" 
+                  required
+                  :disabled="loading"
+                  class="password-input"
+                >
+                <button 
+                  type="button" 
+                  class="password-toggle"
+                  @click="showPassword = !showPassword"
+                  :disabled="loading"
+                >
+                  {{ showPassword ? '🙈' : '👁️' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Konfirmasi Password Baru</label>
               <input 
-                v-model="form.email" 
-                type="email" 
-                placeholder="Masukkan email Anda" 
+                v-model="form.confirmPassword" 
+                type="password" 
+                placeholder="••••••••" 
                 required
                 :disabled="loading"
               >
@@ -24,8 +46,8 @@
               class="reset-btn"
               :disabled="loading"
             >
-              <span v-if="loading">Mengirim...</span>
-              <span v-else>Kirim Link Reset</span>
+              <span v-if="loading">Mengupdate...</span>
+              <span v-else>Reset Password</span>
             </button>
 
             <div v-if="error" class="error-message">
@@ -38,9 +60,7 @@
           </form>
           
           <div class="login-link">
-            <p>Ingat password? 
-              <router-link to="/login">Login di sini</router-link>
-            </p>
+            <router-link to="/login">← Kembali ke Login</router-link>
           </div>
         </div>
       </div>
@@ -49,17 +69,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase } from '@/composables/useSupabase'
 import Weblayout from './Weblayout.vue'
 
+const router = useRouter()
+
 const form = ref({
-  email: ''
+  password: '',
+  confirmPassword: ''
 })
 
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
+const showPassword = ref(false)
+const hasValidSession = ref(false)
+
+// Function untuk extract token dari URL hash
+const extractTokenFromURL = () => {
+  const hash = window.location.hash
+  console.log('🔍 Current URL hash:', hash)
+  
+  if (hash && hash.includes('access_token')) {
+    try {
+      // Extract token dari format: #/reset-password#access_token=xxx
+      const tokenPart = hash.split('#access_token=')[1]
+      if (tokenPart) {
+        const accessToken = tokenPart.split('&')[0]
+        console.log('✅ Extracted access token:', accessToken)
+        return accessToken
+      }
+    } catch (err) {
+      console.error('❌ Error extracting token from URL:', err)
+    }
+  }
+  
+  return null
+}
+
+// Function untuk set session dengan token dari URL
+const setSessionFromToken = async (accessToken: string) => {
+  try {
+    console.log('🔄 Setting session from token...')
+    
+    const { data, error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: '' // Refresh token tidak diperlukan untuk reset password
+    })
+    
+    if (error) {
+      console.error('❌ Error setting session:', error)
+      throw error
+    }
+    
+    if (data.session) {
+      console.log('✅ Session set successfully')
+      hasValidSession.value = true
+      return true
+    }
+    
+    return false
+    
+  } catch (err) {
+    console.error('❌ Failed to set session:', err)
+    return false
+  }
+}
 
 const handleResetPassword = async () => {
   try {
@@ -67,43 +144,96 @@ const handleResetPassword = async () => {
     error.value = ''
     success.value = ''
 
-    // KEMBALI PAKAI HASH ROUTING
-    const redirectTo = 'https://tpq-miftahul-jannah.vercel.app/#/reset-password'
+    // Validasi
+    if (form.value.password !== form.value.confirmPassword) {
+      throw new Error('Password dan konfirmasi password tidak sama')
+    }
 
-    console.log('🔐 Sending reset password email to:', form.value.email)
-    console.log('🔗 Redirect URL:', redirectTo)
+    if (form.value.password.length < 6) {
+      throw new Error('Password minimal 6 karakter')
+    }
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      form.value.email,
-      {
-        redirectTo: redirectTo,
-      }
-    )
+    console.log('🔄 Updating password...')
+
+    const { error: resetError } = await supabase.auth.updateUser({
+      password: form.value.password
+    })
     
     if (resetError) {
-      console.error('❌ Reset password error:', resetError)
+      console.error('❌ Password update error:', resetError)
       throw resetError
     }
 
-    success.value = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox atau spam folder.'
-    form.value.email = ''
-
-    console.log('✅ Reset password email sent successfully')
+    success.value = 'Password berhasil direset! Mengarahkan ke login...'
+    
+    // Sign out setelah reset password berhasil
+    await supabase.auth.signOut()
+    
+    // Redirect ke login setelah 2 detik
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
 
   } catch (err: any) {
     console.error('❌ Reset password failed:', err)
-    error.value = err.message || 'Gagal mengirim link reset. Silakan coba lagi.'
+    error.value = err.message || 'Gagal reset password. Coba lagi.'
   } finally {
     loading.value = false
   }
 }
+
+// Check session dan handle token dari URL
+const initializeAuth = async () => {
+  try {
+    console.log('🔍 Initializing auth...')
+    
+    // Cek session yang sudah ada
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError)
+      throw sessionError
+    }
+    
+    // Jika sudah ada session yang valid
+    if (session) {
+      console.log('✅ Valid session found')
+      hasValidSession.value = true
+      return
+    }
+    
+    // Jika tidak ada session, coba extract token dari URL
+    console.log('❌ No session found, checking URL for token...')
+    const accessToken = extractTokenFromURL()
+    
+    if (accessToken) {
+      console.log('🔄 Token found in URL, setting session...')
+      const sessionSet = await setSessionFromToken(accessToken)
+      
+      if (sessionSet) {
+        return
+      }
+    }
+    
+    // Jika sampai sini berarti tidak ada session yang valid
+    console.log('❌ No valid session or token found')
+    error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
+    
+  } catch (err) {
+    console.error('Error during auth initialization:', err)
+    error.value = 'Terjadi error saat memverifikasi session. Silakan coba lagi.'
+  }
+}
+
+onMounted(async () => {
+  await initializeAuth()
+})
 </script>
 
 <style scoped>
-/* CSS tetap sama */
-.forgot-password-page {
+.reset-password-page {
   min-height: calc(100vh - 200px);
-  background: linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%);
+  background: linear-gradient(135deg, #f0fff0 0%, #e6ffe6 100%);
   display: flex;
   align-items: center;
   padding: 2rem 0;
@@ -115,7 +245,7 @@ const handleResetPassword = async () => {
   padding: 0 20px;
 }
 
-.forgot-password-card {
+.reset-password-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
@@ -128,17 +258,17 @@ const handleResetPassword = async () => {
   margin-bottom: 1rem;
 }
 
-.forgot-password-card h2 {
+.reset-password-card h2 {
   color: #2d3748;
   margin-bottom: 0.5rem;
 }
 
-.forgot-password-card p {
+.reset-password-card p {
   color: #718096;
   margin-bottom: 2rem;
 }
 
-.forgot-password-form {
+.reset-password-form {
   text-align: left;
 }
 
@@ -167,9 +297,41 @@ const handleResetPassword = async () => {
   border-color: #4299e1;
 }
 
+/* Password Input Container */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 50px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.password-toggle:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.password-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .reset-btn {
   width: 100%;
-  background: #ed8936;
+  background: #38a169;
   color: white;
   border: none;
   padding: 12px;
@@ -181,7 +343,7 @@ const handleResetPassword = async () => {
 }
 
 .reset-btn:hover:not(:disabled) {
-  background: #dd6b20;
+  background: #2f855a;
 }
 
 .reset-btn:disabled {
@@ -228,7 +390,7 @@ const handleResetPassword = async () => {
 
 /* Responsive Design */
 @media (max-width: 480px) {
-  .forgot-password-page {
+  .reset-password-page {
     padding: 1rem 0;
     min-height: calc(100vh - 150px);
   }
@@ -237,12 +399,17 @@ const handleResetPassword = async () => {
     padding: 0 15px;
   }
   
-  .forgot-password-card {
+  .reset-password-card {
     padding: 1.5rem;
   }
   
   .logo {
     font-size: 2.5rem;
+  }
+  
+  .password-toggle {
+    right: 6px;
+    font-size: 1.1rem;
   }
 }
 </style>
