@@ -92,30 +92,48 @@ const showPassword = ref(false)
 const hasValidSession = ref(false)
 const debugInfo = ref('')
 
-// Function untuk handle OAuth recovery
-const handleOAuthRecovery = async () => {
+// Function untuk extract token dari query parameters
+const extractTokenFromQuery = () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const accessToken = urlParams.get('access_token')
+  const tokenType = urlParams.get('type')
+  
+  console.log('🔍 URL Search Params:', window.location.search)
+  console.log('🔍 Access Token from query:', accessToken)
+  console.log('🔍 Token Type:', tokenType)
+  
+  if (accessToken && tokenType === 'recovery') {
+    return accessToken
+  }
+  return null
+}
+
+// Function untuk set session dengan token
+const setSessionFromToken = async (accessToken: string) => {
   try {
-    console.log('🔄 Handling OAuth recovery...')
+    console.log('🔄 Setting session from token...')
     
-    // Supabase akan automatically handle the session dari URL
-    const { data, error } = await supabase.auth.getSession()
+    const { data, error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: ''
+    })
     
     if (error) {
-      console.error('❌ Session error:', error)
+      console.error('❌ Error setting session:', error)
       throw error
     }
     
     if (data.session) {
-      console.log('✅ OAuth recovery successful, session found')
+      console.log('✅ Session set successfully')
       hasValidSession.value = true
-      debugInfo.value = 'Session valid - bisa reset password'
+      debugInfo.value = 'Session berhasil dibuat dari token'
       return true
     }
     
     return false
     
   } catch (err) {
-    console.error('❌ OAuth recovery failed:', err)
+    console.error('❌ Failed to set session:', err)
     return false
   }
 }
@@ -151,6 +169,9 @@ const handleResetPassword = async () => {
     // Sign out setelah reset password berhasil
     await supabase.auth.signOut()
     
+    // Clear URL parameters
+    window.history.replaceState({}, document.title, window.location.pathname)
+    
     // Redirect ke login setelah 2 detik
     setTimeout(() => {
       router.push('/login')
@@ -170,14 +191,17 @@ const initializeAuth = async () => {
     console.log('🔍 Initializing auth...')
     debugInfo.value = 'Memeriksa session...'
     
-    // Coba handle OAuth recovery terlebih dahulu
-    const recoverySuccess = await handleOAuthRecovery()
-    
-    if (recoverySuccess) {
-      return
+    // 1. Cek token dari query parameters
+    const accessToken = extractTokenFromQuery()
+    if (accessToken) {
+      console.log('✅ Token found in query parameters')
+      const sessionSet = await setSessionFromToken(accessToken)
+      if (sessionSet) {
+        return
+      }
     }
     
-    // Fallback: cek session biasa
+    // 2. Cek session yang sudah ada
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     
     if (sessionError) {
@@ -192,9 +216,9 @@ const initializeAuth = async () => {
       return
     }
     
-    // Jika tidak ada session
-    console.log('❌ No valid session found')
-    debugInfo.value = 'Tidak ada session valid'
+    // 3. Jika tidak ada session atau token
+    console.log('❌ No valid session or token found')
+    debugInfo.value = 'Tidak ada session atau token valid'
     error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
     
   } catch (err) {
