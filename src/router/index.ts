@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     // ===== PUBLIC ROUTES =====
     {
@@ -241,7 +241,7 @@ const router = createRouter({
   ]
 })
 
-// ROUTER GUARD - FIX: remove unused 'from' parameter
+// ROUTER GUARD
 router.beforeEach(async (to, _, next) => {
   const authStore = useAuthStore()
   
