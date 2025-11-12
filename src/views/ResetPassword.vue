@@ -101,13 +101,21 @@ const handleResetPassword = async () => {
       throw new Error('Password minimal 6 karakter')
     }
 
+    console.log('🔄 Updating password...')
+
     const { error: resetError } = await supabase.auth.updateUser({
       password: form.value.password
     })
     
-    if (resetError) throw resetError
+    if (resetError) {
+      console.error('❌ Password update error:', resetError)
+      throw resetError
+    }
 
     success.value = 'Password berhasil direset! Mengarahkan ke login...'
+    
+    // Sign out setelah reset password berhasil
+    await supabase.auth.signOut()
     
     // Redirect ke login setelah 2 detik
     setTimeout(() => {
@@ -115,20 +123,43 @@ const handleResetPassword = async () => {
     }, 2000)
 
   } catch (err: any) {
+    console.error('❌ Reset password failed:', err)
     error.value = err.message || 'Gagal reset password. Coba lagi.'
-    console.error('Reset password error:', err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => {
-  // Cek jika user punya session yang valid untuk reset password
-  supabase.auth.getUser().then(({ data: { user } }) => {
-    if (!user) {
-      router.push('/login')
+// Check jika user punya session valid
+const checkAuthSession = async () => {
+  try {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError)
+      throw sessionError
     }
-  })
+    
+    // Jika tidak ada session, tampilkan error
+    if (!session) {
+      console.log('❌ No session found')
+      error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
+      return false
+    }
+    
+    console.log('✅ Session found, user can reset password')
+    return true
+    
+  } catch (err) {
+    console.error('Error checking session:', err)
+    error.value = 'Terjadi error saat memverifikasi session. Silakan coba lagi.'
+    return false
+  }
+}
+
+onMounted(async () => {
+  console.log('🔍 Checking auth session...')
+  await checkAuthSession()
 })
 </script>
 
