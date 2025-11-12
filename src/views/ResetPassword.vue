@@ -1,26 +1,15 @@
 <template>
   <Weblayout>
-    <div class="login-page">
+    <div class="reset-password-page">
       <div class="container">
-        <div class="login-card">
-          <div class="logo">📚</div>
-          <h2>Login TPA</h2>
-          <p>Masuk ke sistem TPA Miftahul Jannah</p>
+        <div class="reset-password-card">
+          <div class="logo">🔄</div>
+          <h2>Reset Password</h2>
+          <p>Masukkan password baru Anda</p>
           
-          <form @submit.prevent="handleLogin" class="login-form">
+          <form @submit.prevent="handleResetPassword" class="reset-password-form">
             <div class="form-group">
-              <label>Email</label>
-              <input 
-                v-model="form.email" 
-                type="email" 
-                placeholder="Masukkan email" 
-                required
-                :disabled="loading"
-              >
-            </div>
-            
-            <div class="form-group">
-              <label>Password</label>
+              <label>Password Baru</label>
               <div class="password-input-container">
                 <input 
                   v-model="form.password" 
@@ -41,28 +30,37 @@
               </div>
             </div>
 
-            <div class="forgot-password-link">
-              <router-link to="/forgot-password">Lupa password?</router-link>
+            <div class="form-group">
+              <label>Konfirmasi Password Baru</label>
+              <input 
+                v-model="form.confirmPassword" 
+                type="password" 
+                placeholder="••••••••" 
+                required
+                :disabled="loading"
+              >
             </div>
             
             <button 
               type="submit" 
-              class="login-btn"
+              class="reset-btn"
               :disabled="loading"
             >
-              <span v-if="loading">Memproses...</span>
-              <span v-else>Login</span>
+              <span v-if="loading">Mengupdate...</span>
+              <span v-else>Reset Password</span>
             </button>
 
             <div v-if="error" class="error-message">
               {{ error }}
             </div>
-          </form>
 
-          <div class="signup-link">
-            <p>Belum punya akun? 
-              <router-link to="/signup">Daftar di sini</router-link>
-            </p>
+            <div v-if="success" class="success-message">
+              {{ success }}
+            </div>
+          </form>
+          
+          <div class="login-link">
+            <router-link to="/login">← Kembali ke Login</router-link>
           </div>
         </div>
       </div>
@@ -71,81 +69,73 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useSupabase'
-import { useAuthStore } from '@/stores/auth'
+import { supabase } from '@/composables/useSupabase'
 import Weblayout from './Weblayout.vue'
 
 const router = useRouter()
-const { signIn } = useAuth()
-const authStore = useAuthStore()
 
 const form = ref({
-  email: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 })
 
 const loading = ref(false)
 const error = ref('')
+const success = ref('')
 const showPassword = ref(false)
 
-const handleLogin = async () => {
+const handleResetPassword = async () => {
   try {
     loading.value = true
     error.value = ''
+    success.value = ''
 
-    const { error: authError } = await signIn(form.value.email, form.value.password)
-    
-    if (authError) throw authError
-
-    // Init auth store
-    await authStore.init()
-
-    // CHECK STATUS & REDIRECT DI SINI - lebih efisien
-    const userStatus = authStore.getUserStatus()
-    const userRole = authStore.getUserRole()
-
-    console.log('🔍 [LOGIN] User status:', userStatus)
-    console.log('🔍 [LOGIN] User role:', userRole)
-
-    // Redirect berdasarkan status dan role
-    if (userStatus !== 'approved') {
-      console.log('🚫 [LOGIN] User not approved, redirecting to pending...')
-      router.push('/pending-approval')
-      return
+    // Validasi
+    if (form.value.password !== form.value.confirmPassword) {
+      throw new Error('Password dan konfirmasi password tidak sama')
     }
 
-    console.log('✅ [LOGIN] User approved, redirecting to dashboard...')
-    
-    // Redirect berdasarkan role
-    switch (userRole) {
-      case 'super_admin':
-        router.push('/admin')
-        break
-      case 'pengajar':
-        router.push('/guru')
-        break
-      case 'orangtua':
-        router.push('/orangtua')
-        break
-      default:
-        router.push('/')
+    if (form.value.password.length < 6) {
+      throw new Error('Password minimal 6 karakter')
     }
+
+    const { error: resetError } = await supabase.auth.updateUser({
+      password: form.value.password
+    })
+    
+    if (resetError) throw resetError
+
+    success.value = 'Password berhasil direset! Mengarahkan ke login...'
+    
+    // Redirect ke login setelah 2 detik
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
 
   } catch (err: any) {
-    error.value = err.message || 'Login gagal. Cek email dan password Anda.'
-    console.error('Login error:', err)
+    error.value = err.message || 'Gagal reset password. Coba lagi.'
+    console.error('Reset password error:', err)
   } finally {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  // Cek jika user punya session yang valid untuk reset password
+  supabase.auth.getUser().then(({ data: { user } }) => {
+    if (!user) {
+      router.push('/login')
+    }
+  })
+})
 </script>
 
 <style scoped>
-.login-page {
+.reset-password-page {
   min-height: calc(100vh - 200px);
-  background: linear-gradient(135deg, #f0f9f0 0%, #e6f3ff 100%);
+  background: linear-gradient(135deg, #f0fff0 0%, #e6ffe6 100%);
   display: flex;
   align-items: center;
   padding: 2rem 0;
@@ -157,7 +147,7 @@ const handleLogin = async () => {
   padding: 0 20px;
 }
 
-.login-card {
+.reset-password-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
@@ -170,17 +160,17 @@ const handleLogin = async () => {
   margin-bottom: 1rem;
 }
 
-.login-card h2 {
+.reset-password-card h2 {
   color: #2d3748;
   margin-bottom: 0.5rem;
 }
 
-.login-card p {
+.reset-password-card p {
   color: #718096;
   margin-bottom: 2rem;
 }
 
-.login-form {
+.reset-password-form {
   text-align: left;
 }
 
@@ -241,26 +231,9 @@ const handleLogin = async () => {
   cursor: not-allowed;
 }
 
-/* Forgot Password Link */
-.forgot-password-link {
-  text-align: right;
-  margin-bottom: 1.5rem;
-}
-
-.forgot-password-link a {
-  color: #718096;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.forgot-password-link a:hover {
-  color: #4299e1;
-  text-decoration: underline;
-}
-
-.login-btn {
+.reset-btn {
   width: 100%;
-  background: #4299e1;
+  background: #38a169;
   color: white;
   border: none;
   padding: 12px;
@@ -271,11 +244,11 @@ const handleLogin = async () => {
   transition: background 0.3s;
 }
 
-.login-btn:hover:not(:disabled) {
-  background: #3182ce;
+.reset-btn:hover:not(:disabled) {
+  background: #2f855a;
 }
 
-.login-btn:disabled {
+.reset-btn:disabled {
   background: #a0aec0;
   cursor: not-allowed;
 }
@@ -290,26 +263,36 @@ const handleLogin = async () => {
   font-weight: 500;
 }
 
-.signup-link {
+.success-message {
+  background: #c6f6d5;
+  color: #276749;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.login-link {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid #e2e8f0;
   text-align: center;
 }
 
-.signup-link a {
+.login-link a {
   color: #4299e1;
   text-decoration: none;
   font-weight: 500;
 }
 
-.signup-link a:hover {
+.login-link a:hover {
   text-decoration: underline;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-  .login-page {
+  .reset-password-page {
     padding: 1rem 0;
     min-height: calc(100vh - 150px);
   }
@@ -318,7 +301,7 @@ const handleLogin = async () => {
     padding: 0 15px;
   }
   
-  .login-card {
+  .reset-password-card {
     padding: 1.5rem;
   }
   
@@ -329,10 +312,6 @@ const handleLogin = async () => {
   .password-toggle {
     right: 6px;
     font-size: 1.1rem;
-  }
-  
-  .forgot-password-link {
-    text-align: center;
   }
 }
 </style>
