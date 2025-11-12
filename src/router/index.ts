@@ -25,11 +25,21 @@ const router = createRouter({
       component: () => import('@/views/web/Info.vue')
     },
 
-    // ===== AUTHENTICATION ROUTE =====
+    // ===== AUTHENTICATION ROUTES =====
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/Login.vue'),
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('../views/Signup.vue'),
+    },
+    {
+      path: '/pending-approval',
+      name: 'pending-approval', 
+      component: () => import('../views/PendingApproval.vue')
     },
 
     // ===== ADMIN ROUTES =====
@@ -43,6 +53,11 @@ const router = createRouter({
           path: 'dashboard',
           name: 'admin-dashboard',
           component: () => import('../views/admin/Dashboard.vue')
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('../views/admin/UserManagement.vue')
         },
         {
           path: 'students',

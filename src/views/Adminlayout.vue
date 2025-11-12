@@ -44,6 +44,11 @@
             <span class="nav-icon">📊</span>
             <span class="nav-text">Dashboard</span>
           </router-link>
+
+          <router-link to="/admin/users" class="nav-item" @click="closeSidebarMobile">
+            <span class="nav-icon">👥</span>
+            <span class="nav-text">Manajemen User</span>
+          </router-link>
           
           <router-link to="/admin/students" class="nav-item" @click="closeSidebarMobile">
             <span class="nav-icon">👨‍🎓</span>
@@ -155,6 +160,11 @@
         <router-link to="/admin/dashboard" class="nav-item" @click="closeSidebarMobile">
           <span class="nav-icon">📊</span>
           <span class="nav-text">Dashboard</span>
+        </router-link>
+
+        <router-link to="/admin/users" class="nav-item" @click="closeSidebarMobile">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Manajemen User</span>
         </router-link>
         
         <router-link to="/admin/students" class="nav-item" @click="closeSidebarMobile">

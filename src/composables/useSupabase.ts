@@ -3,81 +3,93 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-console.log('🔧 [SUPABASE] URL:', supabaseUrl)
-console.log('🔑 [SUPABASE] Key exists:', !!supabaseKey)
-
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Auth composable
 export function useAuth() {
-  const signIn = async (username: string, password: string) => {
-    console.log('🔍 [AUTH] Mencari username:', username)
-    
+  const signIn = async (email: string, password: string) => {
     try {
-      // Test connection dulu
-      console.log('🌐 [AUTH] Testing Supabase connection...')
-      const { data: testData, error: testError } = await supabase
-        .from('users')
-        .select('count')
-        .limit(1)
-      
-      console.log('📡 [AUTH] Connection test:', testData, testError)
-
-      if (testError) {
-        console.log('💥 [AUTH] Connection failed:', testError)
-        return { data: null, error: testError }
-      }
-
-      // Cari user by username
-      console.log('🔎 [AUTH] Executing query untuk username:', username)
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .single()
-
-      console.log('📦 [AUTH] Query result:', userData)
-      console.log('❌ [AUTH] Query error:', userError)
-      console.log('🔧 [AUTH] Error code:', userError?.code)
-      console.log('📝 [AUTH] Error message:', userError?.message)
-
-      if (userError) {
-        if (userError.code === 'PGRST116') {
-          console.log('🚫 [AUTH] No rows returned - username tidak ada di database')
-        } else {
-          console.log('💀 [AUTH] Other database error:', userError)
-        }
-        return { data: null, error: new Error('Username tidak ditemukan') }
-      }
-
-      if (!userData) {
-        console.log('🚫 [AUTH] User data is null')
-        return { data: null, error: new Error('Username tidak ditemukan') }
-      }
-
-      console.log('✅ [AUTH] User ditemukan:', userData)
-      console.log('📧 [AUTH] Email user:', userData.email)
-
-      // Login dengan email
-      console.log('🔑 [AUTH] Attempting login dengan email:', userData.email)
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: userData.email,
+        email: email.trim().toLowerCase(),
         password,
       })
       
-      console.log('🎯 [AUTH] Login result - data:', data)
-      console.log('💥 [AUTH] Login result - error:', error)
-      
       if (error) {
-        console.log('🚫 [AUTH] Login failed:', error.message)
+        // Better error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return { 
+            data: null, 
+            error: new Error('Email atau password salah') 
+          }
+        } else if (error.message.includes('Email not confirmed')) {
+          return { 
+            data: null, 
+            error: new Error('Email belum dikonfirmasi') 
+          }
+        }
+        
         return { data: null, error }
       }
 
-      console.log('🎉 [AUTH] Login successful!')
       return { data, error: null }
 
     } catch (err) {
-      console.log('💀 [AUTH] Catch error:', err)
+      return { data: null, error: err }
+    }
+  }
+
+  const signUp = async (email: string, password: string, fullName: string, phone?: string) => {
+    try {
+      // 1. Daftar ke Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone || ''
+          }
+        }
+      })
+      
+      if (authError) {
+        return { data: null, error: authError }
+      }
+
+      if (!authData.user) {
+        return { data: null, error: new Error('Gagal membuat akun') }
+      }
+
+      // 2. Auto-create profile di table users
+      const username = email.split('@')[0] + '_' + Date.now().toString().slice(-4)
+      
+      const { data: profileData, error: profileError } = await supabase
+        .from('users')
+        .insert({
+          id: authData.user.id,
+          email: email,
+          username: username,
+          full_name: fullName,
+          phone: phone || '',
+          role: 'orangtua',
+          status: 'pending'
+        })
+        .select()
+        .single()
+
+      if (profileError) {
+        return { data: null, error: profileError }
+      }
+
+      return { 
+        data: { 
+          user: authData.user, 
+          profile: profileData 
+        }, 
+        error: null 
+      }
+
+    } catch (err) {
       return { data: null, error: err }
     }
   }
@@ -98,6 +110,7 @@ export function useAuth() {
 
   return {
     signIn,
+    signUp,
     signOut,
     getCurrentUser,
     onAuthStateChange,
@@ -107,34 +120,36 @@ export function useAuth() {
 // Database composable untuk users
 export function useDatabase() {
   const getProfile = async (userId: string) => {
-    console.log('👤 [DB] Getting profile for user:', userId)
-    
     let { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single()
 
-    console.log('📊 [DB] Profile result:', data)
-    console.log('❌ [DB] Profile error:', error)
-
     // Jika profile tidak ada, buat default
     if (error?.code === 'PGRST116') {
-      console.log('🆕 [DB] Profile not found, creating default...')
+      // Dapatkan user data dari auth
+      const { data: userData } = await supabase.auth.getUser()
+      
+      if (!userData.user) {
+        return { data: null, error: new Error('User tidak ditemukan') }
+      }
+
+      const username = userData.user.email?.split('@')[0] + '_' + Date.now().toString().slice(-4)
+      
       const { data: newProfile, error: createError } = await supabase
         .from('users')
         .insert({
-          id: userId,
-          username: 'user' + Date.now(),
+          id: userData.user.id,
+          username: username,
           role: 'orangtua',
-          full_name: 'User',
-          email: 'user@example.com'
+          full_name: userData.user.user_metadata?.full_name || userData.user.email?.split('@')[0] || 'User',
+          email: userData.user.email || '',
+          phone: userData.user.user_metadata?.phone || '',
+          status: 'pending'
         })
         .select()
         .single()
-      
-      console.log('✅ [DB] New profile created:', newProfile)
-      console.log('❌ [DB] Create error:', createError)
       
       return { data: newProfile, error: createError }
     }
@@ -155,12 +170,48 @@ export function useDatabase() {
     const { data, error } = await supabase
       .from('users')
       .select('*')
+      .order('created_at', { ascending: false })
     return { data, error }
+  }
+
+  const updateUserRole = async (userId: string, newRole: string) => {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ role: newRole })
+      .eq('id', userId)
+      .select()
+      .single()
+    return { data, error }
+  }
+
+  const approveUser = async (userId: string, approvedBy: string) => {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ 
+        status: 'approved',
+        approved_by: approvedBy,
+        approved_at: new Date()
+      })
+      .eq('id', userId)
+      .select()
+      .single()
+    return { data, error }
+  }
+
+  const deleteUser = async (userId: string) => {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId)
+    return { error }
   }
 
   return {
     getProfile,
     createProfile,
     getAllUsers,
+    updateUserRole,
+    approveUser,
+    deleteUser,
   }
 }

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useAuth, useDatabase } from '@/composables/useSupabase'
 
-const { getCurrentUser, onAuthStateChange } = useAuth()
+const { getCurrentUser, onAuthStateChange, signOut } = useAuth()
 const { getProfile } = useDatabase()
 
 export const useAuthStore = defineStore('auth', () => {
@@ -39,7 +39,8 @@ export const useAuthStore = defineStore('auth', () => {
             username: 'user' + Date.now(),
             role: 'orangtua',
             full_name: 'User',
-            email: currentUser.email
+            email: currentUser.email,
+            status: 'pending'
           }
         } else {
           profile.value = data
@@ -114,6 +115,20 @@ export const useAuthStore = defineStore('auth', () => {
     return username
   }
 
+  // Get user status
+  const getUserStatus = () => {
+    const status = profile.value?.status || 'pending'
+    console.log('📋 [AUTH STORE] Get user status:', status)
+    return status
+  }
+
+  // Check if user is approved
+  const isApproved = () => {
+    const approved = profile.value?.status === 'approved'
+    console.log('✅ [AUTH STORE] Is approved:', approved)
+    return approved
+  }
+
   // Get complete user info
   const getUserInfo = () => {
     const info = {
@@ -122,10 +137,28 @@ export const useAuthStore = defineStore('auth', () => {
       fullName: getUserFullName(),
       role: getUserRole(),
       username: getUsername(),
-      email: getUserEmail()
+      email: getUserEmail(),
+      status: getUserStatus(),
+      isApproved: isApproved()
     }
     console.log('📋 [AUTH STORE] Get user info:', info)
     return info
+  }
+
+  // Manual logout
+  const logout = async () => {
+    try {
+      const { error } = await signOut()
+      if (error) throw error
+      
+      user.value = null
+      profile.value = null
+      console.log('🚪 [AUTH STORE] Logout successful')
+      
+    } catch (error) {
+      console.error('💥 [AUTH STORE] Logout error:', error)
+      throw error
+    }
   }
 
   return {
@@ -136,12 +169,15 @@ export const useAuthStore = defineStore('auth', () => {
     
     // Actions
     init,
+    logout,
     hasRole,
     getUserRole,
     isAuthenticated,
     getUserEmail,
     getUserFullName,
     getUsername,
+    getUserStatus,
+    isApproved,
     getUserInfo,
   }
 })
