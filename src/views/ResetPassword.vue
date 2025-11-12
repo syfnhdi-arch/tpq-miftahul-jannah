@@ -85,6 +85,58 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 const showPassword = ref(false)
+const hasValidSession = ref(false)
+
+// Function untuk extract token dari URL hash
+const extractTokenFromURL = () => {
+  const hash = window.location.hash
+  console.log('🔍 Current URL hash:', hash)
+  
+  if (hash && hash.includes('access_token')) {
+    try {
+      // Extract token dari format: #/reset-password#access_token=xxx
+      const tokenPart = hash.split('#access_token=')[1]
+      if (tokenPart) {
+        const accessToken = tokenPart.split('&')[0]
+        console.log('✅ Extracted access token:', accessToken)
+        return accessToken
+      }
+    } catch (err) {
+      console.error('❌ Error extracting token from URL:', err)
+    }
+  }
+  
+  return null
+}
+
+// Function untuk set session dengan token dari URL
+const setSessionFromToken = async (accessToken: string) => {
+  try {
+    console.log('🔄 Setting session from token...')
+    
+    const { data, error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: '' // Refresh token tidak diperlukan untuk reset password
+    })
+    
+    if (error) {
+      console.error('❌ Error setting session:', error)
+      throw error
+    }
+    
+    if (data.session) {
+      console.log('✅ Session set successfully')
+      hasValidSession.value = true
+      return true
+    }
+    
+    return false
+    
+  } catch (err) {
+    console.error('❌ Failed to set session:', err)
+    return false
+  }
+}
 
 const handleResetPassword = async () => {
   try {
@@ -130,9 +182,12 @@ const handleResetPassword = async () => {
   }
 }
 
-// Check jika user punya session valid
-const checkAuthSession = async () => {
+// Check session dan handle token dari URL
+const initializeAuth = async () => {
   try {
+    console.log('🔍 Initializing auth...')
+    
+    // Cek session yang sudah ada
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     
     if (sessionError) {
@@ -140,26 +195,38 @@ const checkAuthSession = async () => {
       throw sessionError
     }
     
-    // Jika tidak ada session, tampilkan error
-    if (!session) {
-      console.log('❌ No session found')
-      error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
-      return false
+    // Jika sudah ada session yang valid
+    if (session) {
+      console.log('✅ Valid session found')
+      hasValidSession.value = true
+      return
     }
     
-    console.log('✅ Session found, user can reset password')
-    return true
+    // Jika tidak ada session, coba extract token dari URL
+    console.log('❌ No session found, checking URL for token...')
+    const accessToken = extractTokenFromURL()
+    
+    if (accessToken) {
+      console.log('🔄 Token found in URL, setting session...')
+      const sessionSet = await setSessionFromToken(accessToken)
+      
+      if (sessionSet) {
+        return
+      }
+    }
+    
+    // Jika sampai sini berarti tidak ada session yang valid
+    console.log('❌ No valid session or token found')
+    error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
     
   } catch (err) {
-    console.error('Error checking session:', err)
+    console.error('Error during auth initialization:', err)
     error.value = 'Terjadi error saat memverifikasi session. Silakan coba lagi.'
-    return false
   }
 }
 
 onMounted(async () => {
-  console.log('🔍 Checking auth session...')
-  await checkAuthSession()
+  await initializeAuth()
 })
 </script>
 
