@@ -67,7 +67,7 @@ const handleResetPassword = async () => {
     error.value = ''
     success.value = ''
 
-    // KEMBALI PAKAI HASH ROUTING
+    // PAKAI HASH ROUTING - lebih reliable untuk Vue Router
     const redirectTo = 'https://tpq-miftahul-jannah.vercel.app/#/reset-password'
 
     console.log('🔐 Sending reset password email to:', form.value.email)
@@ -100,7 +100,6 @@ const handleResetPassword = async () => {
 </script>
 
 <style scoped>
-/* CSS tetap sama */
 .forgot-password-page {
   min-height: calc(100vh - 200px);
   background: linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%);

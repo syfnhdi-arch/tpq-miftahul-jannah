@@ -7,6 +7,10 @@
           <h2>Reset Password</h2>
           <p>Masukkan password baru Anda</p>
           
+          <div v-if="debugInfo" class="debug-info">
+            <p><strong>Debug Info:</strong> {{ debugInfo }}</p>
+          </div>
+          
           <form @submit.prevent="handleResetPassword" class="reset-password-form">
             <div class="form-group">
               <label>Password Baru</label>
@@ -16,7 +20,7 @@
                   :type="showPassword ? 'text' : 'password'" 
                   placeholder="••••••••" 
                   required
-                  :disabled="loading"
+                  :disabled="loading || !hasValidSession"
                   class="password-input"
                 >
                 <button 
@@ -37,14 +41,14 @@
                 type="password" 
                 placeholder="••••••••" 
                 required
-                :disabled="loading"
+                :disabled="loading || !hasValidSession"
               >
             </div>
             
             <button 
               type="submit" 
               class="reset-btn"
-              :disabled="loading"
+              :disabled="loading || !hasValidSession"
             >
               <span v-if="loading">Mengupdate...</span>
               <span v-else>Reset Password</span>
@@ -86,54 +90,32 @@ const error = ref('')
 const success = ref('')
 const showPassword = ref(false)
 const hasValidSession = ref(false)
+const debugInfo = ref('')
 
-// Function untuk extract token dari URL hash
-const extractTokenFromURL = () => {
-  const hash = window.location.hash
-  console.log('🔍 Current URL hash:', hash)
-  
-  if (hash && hash.includes('access_token')) {
-    try {
-      // Extract token dari format: #/reset-password#access_token=xxx
-      const tokenPart = hash.split('#access_token=')[1]
-      if (tokenPart) {
-        const accessToken = tokenPart.split('&')[0]
-        console.log('✅ Extracted access token:', accessToken)
-        return accessToken
-      }
-    } catch (err) {
-      console.error('❌ Error extracting token from URL:', err)
-    }
-  }
-  
-  return null
-}
-
-// Function untuk set session dengan token dari URL
-const setSessionFromToken = async (accessToken: string) => {
+// Function untuk handle OAuth recovery
+const handleOAuthRecovery = async () => {
   try {
-    console.log('🔄 Setting session from token...')
+    console.log('🔄 Handling OAuth recovery...')
     
-    const { data, error } = await supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: '' // Refresh token tidak diperlukan untuk reset password
-    })
+    // Supabase akan automatically handle the session dari URL
+    const { data, error } = await supabase.auth.getSession()
     
     if (error) {
-      console.error('❌ Error setting session:', error)
+      console.error('❌ Session error:', error)
       throw error
     }
     
     if (data.session) {
-      console.log('✅ Session set successfully')
+      console.log('✅ OAuth recovery successful, session found')
       hasValidSession.value = true
+      debugInfo.value = 'Session valid - bisa reset password'
       return true
     }
     
     return false
     
   } catch (err) {
-    console.error('❌ Failed to set session:', err)
+    console.error('❌ OAuth recovery failed:', err)
     return false
   }
 }
@@ -182,12 +164,20 @@ const handleResetPassword = async () => {
   }
 }
 
-// Check session dan handle token dari URL
+// Initialize auth
 const initializeAuth = async () => {
   try {
     console.log('🔍 Initializing auth...')
+    debugInfo.value = 'Memeriksa session...'
     
-    // Cek session yang sudah ada
+    // Coba handle OAuth recovery terlebih dahulu
+    const recoverySuccess = await handleOAuthRecovery()
+    
+    if (recoverySuccess) {
+      return
+    }
+    
+    // Fallback: cek session biasa
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     
     if (sessionError) {
@@ -195,32 +185,21 @@ const initializeAuth = async () => {
       throw sessionError
     }
     
-    // Jika sudah ada session yang valid
     if (session) {
       console.log('✅ Valid session found')
       hasValidSession.value = true
+      debugInfo.value = 'Session valid - bisa reset password'
       return
     }
     
-    // Jika tidak ada session, coba extract token dari URL
-    console.log('❌ No session found, checking URL for token...')
-    const accessToken = extractTokenFromURL()
-    
-    if (accessToken) {
-      console.log('🔄 Token found in URL, setting session...')
-      const sessionSet = await setSessionFromToken(accessToken)
-      
-      if (sessionSet) {
-        return
-      }
-    }
-    
-    // Jika sampai sini berarti tidak ada session yang valid
-    console.log('❌ No valid session or token found')
+    // Jika tidak ada session
+    console.log('❌ No valid session found')
+    debugInfo.value = 'Tidak ada session valid'
     error.value = 'Link reset password tidak valid atau sudah kadaluarsa. Silakan request reset password lagi.'
     
   } catch (err) {
     console.error('Error during auth initialization:', err)
+    debugInfo.value = 'Error memeriksa session'
     error.value = 'Terjadi error saat memverifikasi session. Silakan coba lagi.'
   }
 }
@@ -268,6 +247,15 @@ onMounted(async () => {
   margin-bottom: 2rem;
 }
 
+.debug-info {
+  background: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
 .reset-password-form {
   text-align: left;
 }
@@ -295,6 +283,11 @@ onMounted(async () => {
 .form-group input:focus {
   outline: none;
   border-color: #4299e1;
+}
+
+.form-group input:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
 }
 
 /* Password Input Container */
