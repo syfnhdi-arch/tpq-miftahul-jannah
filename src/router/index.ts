@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
-  history: createWebHashHistory(), // ← GANTI KE INI
+  history: createWebHistory(),
   routes: [
     // ===== PUBLIC ROUTES =====
     {
@@ -241,22 +241,27 @@ const router = createRouter({
   ]
 })
 
-// ROUTER GUARD (tetap sama)
+// ROUTER GUARD
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
+  // Wait for auth to initialize
   await authStore.init()
   
   const isAuthenticated = authStore.isAuthenticated()
   const userRole = authStore.getUserRole()
   const isApproved = authStore.isApproved()
   
+  // Check if route requires authentication
   if (to.meta.requiresAuth) {
     if (!isAuthenticated) {
+      // Not logged in - redirect to login
       next('/login')
     } else if (!isApproved) {
+      // Logged in but not approved - redirect to pending
       next('/pending-approval')
     } else if (to.meta.requiredRole && userRole !== to.meta.requiredRole) {
+      // Wrong role - redirect to appropriate dashboard or show error
       switch (userRole) {
         case 'super_admin':
           next('/admin')
@@ -271,9 +276,11 @@ router.beforeEach(async (to, from, next) => {
           next('/')
       }
     } else {
+      // All checks passed - allow access
       next()
     }
   } else {
+    // Public route - allow access
     next()
   }
 })
