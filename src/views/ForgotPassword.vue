@@ -67,21 +67,33 @@ const handleResetPassword = async () => {
     error.value = ''
     success.value = ''
 
+    // FIX: Pakai path-based routing untuk Vercel compatibility
+    const siteUrl = 'https://tpq-miftahul-jannah.vercel.app'
+    const redirectTo = `${siteUrl}/reset-password`
+
+    console.log('🔐 Sending reset password email to:', form.value.email)
+    console.log('🔗 Redirect URL:', redirectTo)
+
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       form.value.email,
       {
-        redirectTo: `${window.location.origin}/#/reset-password`,
+        redirectTo: redirectTo,
       }
     )
     
-    if (resetError) throw resetError
+    if (resetError) {
+      console.error('❌ Reset password error:', resetError)
+      throw resetError
+    }
 
-    success.value = 'Link reset password telah dikirim ke email Anda!'
+    success.value = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox atau spam folder.'
     form.value.email = ''
 
+    console.log('✅ Reset password email sent successfully')
+
   } catch (err: any) {
-    error.value = err.message || 'Gagal mengirim link reset. Coba lagi.'
-    console.error('Reset password error:', err)
+    console.error('❌ Reset password failed:', err)
+    error.value = err.message || 'Gagal mengirim link reset. Silakan coba lagi.'
   } finally {
     loading.value = false
   }
@@ -89,6 +101,7 @@ const handleResetPassword = async () => {
 </script>
 
 <style scoped>
+/* CSS tetap sama */
 .forgot-password-page {
   min-height: calc(100vh - 200px);
   background: linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%);
