@@ -7,6 +7,10 @@
           <h2>Reset Password</h2>
           <p>Masukkan password baru Anda</p>
           
+          <div class="alert alert-info">
+            <p><strong>INFO:</strong> Halaman ini hanya bisa diakses via link reset password dari email.</p>
+          </div>
+          
           <form @submit.prevent="handleResetPassword" class="reset-password-form">
             <div class="form-group">
               <label>Password Baru</label>
@@ -72,11 +76,24 @@ const error = ref('')
 const success = ref('')
 const showPassword = ref(false)
 
-// CEK SESSION - SIMPLE AJA
-const checkSession = async () => {
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) {
-    error.value = 'Session tidak valid. Request reset password lagi.'
+// FUNCTION SANGAT SIMPLE
+const checkIfCanReset = async () => {
+  try {
+    console.log('Checking session...')
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      error.value = 'Tidak bisa reset password. Pastikan Anda mengakses dari link reset password yang dikirim via email.'
+      return false
+    }
+    
+    console.log('Session found, can reset password')
+    return true
+    
+  } catch (err) {
+    console.error('Error checking session:', err)
+    error.value = 'Error memeriksa session. Coba refresh halaman.'
+    return false
   }
 }
 
@@ -84,33 +101,46 @@ const handleResetPassword = async () => {
   try {
     error.value = ''
     
+    // Validasi sederhana
     if (form.value.password !== form.value.confirmPassword) {
-      throw new Error('Password tidak sama')
+      error.value = 'Password dan konfirmasi password tidak sama'
+      return
     }
 
     if (form.value.password.length < 6) {
-      throw new Error('Password minimal 6 karakter')
+      error.value = 'Password minimal 6 karakter'
+      return
     }
 
+    // Cek session dulu
+    const canReset = await checkIfCanReset()
+    if (!canReset) return
+
+    // Reset password
     const { error: resetError } = await supabase.auth.updateUser({
       password: form.value.password
     })
     
-    if (resetError) throw resetError
+    if (resetError) {
+      error.value = 'Gagal reset password: ' + resetError.message
+      return
+    }
 
-    success.value = 'Password berhasil direset!'
+    success.value = 'Password berhasil direset! Anda akan dialihkan ke halaman login...'
     
+    // Tunggu 3 detik lalu redirect
     setTimeout(() => {
       router.push('/login')
-    }, 2000)
+    }, 3000)
 
   } catch (err: any) {
-    error.value = err.message || 'Gagal reset password'
+    error.value = 'Terjadi error: ' + (err.message || 'Unknown error')
   }
 }
 
+// Saat komponen dimuat
 onMounted(() => {
-  checkSession()
+  checkIfCanReset()
 })
 </script>
 
@@ -140,6 +170,26 @@ onMounted(() => {
 .logo {
   font-size: 4rem;
   margin-bottom: 1rem;
+}
+
+.alert {
+  background: #e6f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.alert-info {
+  background: #e6f3ff;
+  border-color: #b3d9ff;
+}
+
+.alert p {
+  margin: 0;
+  color: #0066cc;
+  font-size: 0.9rem;
 }
 
 .reset-password-card h2 {
