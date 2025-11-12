@@ -67,9 +67,8 @@ const handleResetPassword = async () => {
     error.value = ''
     success.value = ''
 
-    // FIX: Pakai path-based routing untuk Vercel compatibility
-    const siteUrl = 'https://tpq-miftahul-jannah.vercel.app'
-    const redirectTo = `${siteUrl}/reset-password`
+    // KEMBALI PAKAI HASH ROUTING
+    const redirectTo = 'https://tpq-miftahul-jannah.vercel.app/#/reset-password'
 
     console.log('🔐 Sending reset password email to:', form.value.email)
     console.log('🔗 Redirect URL:', redirectTo)
