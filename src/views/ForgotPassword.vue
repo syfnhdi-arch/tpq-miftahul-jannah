@@ -50,11 +50,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { supabase } from '@/composables/useSupabase'
 import Weblayout from './Weblayout.vue'
-
-const router = useRouter()
 
 const form = ref({
   email: ''
@@ -73,7 +70,7 @@ const handleResetPassword = async () => {
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       form.value.email,
       {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/#/reset-password`,
       }
     )
     
